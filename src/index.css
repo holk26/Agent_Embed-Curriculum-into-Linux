@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 94%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 94%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 94%;
+    --primary: 109 93% 55%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 23%;
+    --secondary-foreground: 0 0% 94%;
+    --muted: 0 0% 23%;
+    --muted-foreground: 0 0% 50%;
+    --accent: 0 0% 23%;
+    --accent-foreground: 0 0% 94%;
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 0 0% 94%;
+    --border: 0 0% 23%;
+    --input: 0 0% 23%;
+    --ring: 109 93% 55%;
+    --radius: 0.375rem;
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 0 0% 94%;
+    --sidebar-primary: 109 93% 55%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 23%;
+    --sidebar-accent-foreground: 0 0% 94%;
+    --sidebar-border: 0 0% 23%;
+    --sidebar-ring: 109 93% 55%;
+
+    --terminal-black: #0C0C0C;
+    --terminal-black-alt: #141414;
+    --terminal-green: #4AF626;
+    --terminal-green-dim: #2D8C16;
+    --terminal-white: #F0F0F0;
+    --terminal-gray: #808080;
+    --terminal-gray-dark: #3A3A3A;
+    --terminal-amber: #FFB000;
+    --terminal-red: #FF3333;
+    --terminal-blue: #00A2FF;
+    --terminal-cyan: #00D4AA;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-terminal-black text-terminal-white;
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: rgba(74, 246, 38, 0.3);
+    color: #0C0C0C;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0C0C0C;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2D8C16;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4AF626;
+  }
+}
+
+@layer components {
+  .crt-scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.03) 1px,
+      rgba(0, 0, 0, 0.03) 2px
+    );
+  }
+
+  .crt-vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(ellipse at center, transparent 0%, transparent 60%, rgba(12, 12, 12, 0.4) 100%);
+  }
+
+  .crt-noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.04;
+    background-image: url('/noise-texture.png');
+    background-repeat: repeat;
+  }
+
+  .terminal-glow {
+    text-shadow: 0 0 4px rgba(74, 246, 38, 0.3);
+  }
+}
