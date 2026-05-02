@@ -7,8 +7,8 @@ type FormStep = 'to' | 'from' | 'subject' | 'body' | 'sending' | 'success' | 'ca
 type Phase = 'boot' | 'typing_prompt' | 'typing_command' | 'form' | 'waiting';
 
 /* ─── Constants ─── */
-const RECIPIENT = 'contact@homerocabrera.dev';
-const PROMPT = 'homerocabrera@dev:~/cv$';
+const RECIPIENT = 'contact@cv.x.moonsbow.com';
+const PROMPT = 'moonsbow@dev:~/cv$';
 const COMMAND = ' sendmail ' + RECIPIENT;
 
 const CONTACT = {
@@ -41,7 +41,7 @@ function TerminalWindow({ children }: { children: React.ReactNode }) {
           <span className="w-[10px] h-[10px] rounded-full bg-terminal-green block" />
         </div>
         <span className="absolute left-1/2 -translate-x-1/2 font-mono text-[11px] text-terminal-gray tracking-[0.5px]">
-          user@homerocabrera: ~/cv
+          user@moonsbow: ~/cv
         </span>
       </div>
       {/* Content */}

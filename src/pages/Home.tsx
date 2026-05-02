@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const BOOT_LINES = [
-  '[    0.000000] Linux version 6.8.0-homero (build@homerocabrera.dev)',
+  '[    0.000000] Linux version 6.8.0-homero (build@cv.x.moonsbow.com)',
   '[    0.004000] Command line: BOOT_IMAGE=/vmlinuz-6.8.0-homero root=/dev/sda1 quiet',
   '[    0.016000] KERNEL supported cpus:',
   '[    0.020000]   Intel GenuineIntel',
@@ -47,7 +47,7 @@ const BOOT_LINES = [
   '[    3.300000] systemd[1]: systemd 249.11-0ubuntu3.12 running in system mode',
   '[    3.400000] systemd[1]: Detected virtualization oracle.',
   '[    3.500000] systemd[1]: Detected architecture x86-64.',
-  '[    3.600000] systemd[1]: Hostname set to <homerocabrera>.',
+  '[    3.600000] systemd[1]: Hostname set to <moonsbow>.',
   '[    3.700000] systemd[1]: Queued start job for default target Graphical Interface.',
   '[    3.800000] systemd[1]: Created slice system-modprobe.slice.',
   '[    3.900000] systemd[1]: Finished monitoring of LVM2 mirrors...',
@@ -169,7 +169,7 @@ export default function Home() {
     if (phase === 'login' && !loginTypedRef.current) {
       loginTypedRef.current = true;
       setTypingLogin(true);
-      const target = 'homerocabrera';
+      const target = 'moonsbow';
       let idx = 0;
       const typeChar = () => {
         idx++;
@@ -361,13 +361,13 @@ export default function Home() {
       {(phase === 'login' || phase === 'password' || phase === 'success') && (
         <div className="absolute bottom-8 left-8 max-w-[800px] w-full font-mono text-[14px] leading-[1.5]">
           <div className="text-terminal-white mb-1">
-            Welcome to homerocabrera OS 6.8.0 (GNU/Linux 6.8.0-homero x86_64)
+            Welcome to moonsbow OS 6.8.0 (GNU/Linux 6.8.0-homero x86_64)
           </div>
           <div className="mb-3" />
           <div className="text-terminal-white">
             <span className="text-terminal-gray">* </span>
             Documentation:{' '}
-            <span className="text-terminal-green underline cursor-pointer">https://homerocabrera.dev</span>
+            <span className="text-terminal-green underline cursor-pointer">https://cv.x.moonsbow.com</span>
           </div>
           <div className="text-terminal-white">
             <span className="text-terminal-gray">* </span>
@@ -381,7 +381,7 @@ export default function Home() {
 
           {/* Login field */}
           <div className="flex items-center text-terminal-white">
-            <span>homerocabrera login: </span>
+            <span>moonsbow login: </span>
             {phase === 'login' && (
               <>
                 <span>{loginInput}</span>

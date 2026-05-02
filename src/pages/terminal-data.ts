@@ -96,12 +96,12 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
 
   whoami: () => ({
     type: 'output',
-    content: 'homerocabrera',
+    content: 'moonsbow',
   }),
 
   pwd: (_args, currentDir) => ({
     type: 'output',
-    content: currentDir === '~' ? '/home/homerocabrera' : '/home/homerocabrera/cv',
+    content: currentDir === '~' ? '/home/moonsbow' : '/home/moonsbow/cv',
   }),
 
   date: () => {
@@ -136,50 +136,50 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
     let lines: string[] = [];
     if (dir === '~' || dir === '~/cv') {
       lines = [
-        formatLsLine('drwxr-xr-x', '6', 'homerocabrera', 'dev', '4096', '.'),
-        formatLsLine('drwxr-xr-x', '3', 'homerocabrera', 'dev', '4096', '..'),
-        formatLsLine('drwxr-xr-x', '2', 'homerocabrera', 'dev', '4096', 'certifications'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '2847', 'about.txt'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '1563', 'contact.txt'),
-        formatLsLine('drwxr-xr-x', '4', 'homerocabrera', 'dev', '4096', 'education'),
-        formatLsLine('drwxr-xr-x', '3', 'homerocabrera', 'dev', '4096', 'experience'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '892', 'languages.txt'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '3421', 'skills.txt'),
-        formatLsLine('drwxr-xr-x', '2', 'homerocabrera', 'dev', '4096', 'projects'),
+        formatLsLine('drwxr-xr-x', '6', 'moonsbow', 'dev', '4096', '.'),
+        formatLsLine('drwxr-xr-x', '3', 'moonsbow', 'dev', '4096', '..'),
+        formatLsLine('drwxr-xr-x', '2', 'moonsbow', 'dev', '4096', 'certifications'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '2847', 'about.txt'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1563', 'contact.txt'),
+        formatLsLine('drwxr-xr-x', '4', 'moonsbow', 'dev', '4096', 'education'),
+        formatLsLine('drwxr-xr-x', '3', 'moonsbow', 'dev', '4096', 'experience'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '892', 'languages.txt'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '3421', 'skills.txt'),
+        formatLsLine('drwxr-xr-x', '2', 'moonsbow', 'dev', '4096', 'projects'),
       ];
     } else if (dir === '~/cv/certifications' || dir.endsWith('/certifications')) {
       lines = [
-        formatLsLine('drwxr-xr-x', '2', 'homerocabrera', 'dev', '4096', '.'),
-        formatLsLine('drwxr-xr-x', '4', 'homerocabrera', 'dev', '4096', '..'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '1024', 'foundational-csharp.cert'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '1024', 'cybersecurity-telework.cert'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '1024', 'google-tools.cert'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '1024', 'html-css.cert'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '1024', 'react-guide.cert'),
+        formatLsLine('drwxr-xr-x', '2', 'moonsbow', 'dev', '4096', '.'),
+        formatLsLine('drwxr-xr-x', '4', 'moonsbow', 'dev', '4096', '..'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1024', 'foundational-csharp.cert'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1024', 'cybersecurity-telework.cert'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1024', 'google-tools.cert'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1024', 'html-css.cert'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1024', 'react-guide.cert'),
       ];
     } else if (dir === '~/cv/education' || dir.endsWith('/education')) {
       lines = [
-        formatLsLine('drwxr-xr-x', '4', 'homerocabrera', 'dev', '4096', '.'),
-        formatLsLine('drwxr-xr-x', '3', 'homerocabrera', 'dev', '4096', '..'),
-        formatLsLine('drwxr-xr-x', '2', 'homerocabrera', 'dev', '4096', 'bachelor-software-engineering'),
-        formatLsLine('drwxr-xr-x', '2', 'homerocabrera', 'dev', '4096', 'mobile-apps-specialization'),
-        formatLsLine('drwxr-xr-x', '2', 'homerocabrera', 'dev', '4096', 'technologist-info-systems'),
+        formatLsLine('drwxr-xr-x', '4', 'moonsbow', 'dev', '4096', '.'),
+        formatLsLine('drwxr-xr-x', '3', 'moonsbow', 'dev', '4096', '..'),
+        formatLsLine('drwxr-xr-x', '2', 'moonsbow', 'dev', '4096', 'bachelor-software-engineering'),
+        formatLsLine('drwxr-xr-x', '2', 'moonsbow', 'dev', '4096', 'mobile-apps-specialization'),
+        formatLsLine('drwxr-xr-x', '2', 'moonsbow', 'dev', '4096', 'technologist-info-systems'),
       ];
     } else if (dir === '~/cv/experience' || dir.endsWith('/experience')) {
       lines = [
-        formatLsLine('drwxr-xr-x', '2', 'homerocabrera', 'dev', '4096', '.'),
-        formatLsLine('drwxr-xr-x', '4', 'homerocabrera', 'dev', '4096', '..'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '1245', 'freelancer-ufinet.md'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '2156', 'telefonica-bo.md'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '987', 'town-hall.md'),
+        formatLsLine('drwxr-xr-x', '2', 'moonsbow', 'dev', '4096', '.'),
+        formatLsLine('drwxr-xr-x', '4', 'moonsbow', 'dev', '4096', '..'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1245', 'freelancer-ufinet.md'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '2156', 'telefonica-bo.md'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '987', 'town-hall.md'),
       ];
     } else if (dir === '~/cv/projects' || dir.endsWith('/projects')) {
       lines = [
-        formatLsLine('drwxr-xr-x', '2', 'homerocabrera', 'dev', '4096', '.'),
-        formatLsLine('drwxr-xr-x', '3', 'homerocabrera', 'dev', '4096', '..'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '2048', 'data-automation.md'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '2048', 'ssis-pipeline.md'),
-        formatLsLine('-rw-r--r--', '1', 'homerocabrera', 'dev', '2048', 'web-dashboard.md'),
+        formatLsLine('drwxr-xr-x', '2', 'moonsbow', 'dev', '4096', '.'),
+        formatLsLine('drwxr-xr-x', '3', 'moonsbow', 'dev', '4096', '..'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '2048', 'data-automation.md'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '2048', 'ssis-pipeline.md'),
+        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '2048', 'web-dashboard.md'),
       ];
     } else {
       return { type: 'error', content: `ls: cannot access '${args[0]}': No such file or directory` };
@@ -268,7 +268,7 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
     const ascii = `                    .OMMMMMMMMMMMMMMMO.                   \n                 .MMMMMMMMMMMMMMMMMMMMM.                \n                MMMMMMMM'            'MMMM                \n               MMMMMM                  MM               \n              MMMMM'                    'M              \n             MMMMM                       M              \n            .MMMM                        .              \n            MMMM'                                       \n           MMMM'                                        \n          MMMM'                                         \n          MMMM                                          \n          MMMM                                          \n         .MMM'                                          \n          MMM'                                          \n          MMMM                                          \n          MMMM                                          \n          MMMM.                                         \n           MMM:                    .M'                   \n            MMM.                  .M'                    \n             'MMM.               .M'                     \n               'MMMMMMMMMMMMMMMMMM'                     \n                 ''MMMMMMMMMMM''                       `;
 
     const info = [
-      ['OS', 'homerocabrera OS 6.8.0'],
+      ['OS', 'moonsbow OS 6.8.0'],
       ['Host', 'Virtual Developer Workstation'],
       ['Kernel', '6.8.0-homero'],
       ['Uptime', uptimeStr],
@@ -290,7 +290,7 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
     for (let i = 0; i < Math.max(asciiLines.length, info.length + 2); i++) {
       const art = (asciiLines[i] || '').padEnd(55, ' ');
       if (i === 0) {
-        output += art + 'homerocabrera@dev\n';
+        output += art + 'moonsbow@dev\n';
       } else if (i === 1) {
         output += art + '─────────────────\n';
       } else {

@@ -14,7 +14,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 h-[40px] bg-terminal-black-alt border-b border-terminal-gray-dark flex items-center px-0 select-none">
       <div className="flex items-center px-4 h-full shrink-0">
         <span className="text-terminal-green font-mono text-[13px] font-bold">
-          homerocabrera@dev:~$
+          moonsbow@dev:~$
         </span>
       </div>
       <div className="flex items-end h-full overflow-x-auto">

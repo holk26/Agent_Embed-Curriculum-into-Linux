@@ -406,7 +406,7 @@ export default function Terminal() {
 
       await typeText(loginMsg, 'output', 30);
       await sleep(400);
-      await typeText('Welcome to homerocabrera OS 6.8.0', 'output', 30);
+      await typeText('Welcome to moonsbow OS 6.8.0', 'output', 30);
       await sleep(200);
     };
 
@@ -450,7 +450,7 @@ export default function Terminal() {
     setHistoryIndex(-1);
 
     // Add command line to scrollback
-    const promptText = `homerocabrera@dev:${getPromptPath(currentDir)}$ ${trimmed}`;
+    const promptText = `moonsbow@dev:${getPromptPath(currentDir)}$ ${trimmed}`;
     setLines(prev => [...prev, { id: Date.now().toString(), type: 'command', content: promptText }]);
 
     // Parse command
@@ -590,7 +590,7 @@ export default function Terminal() {
     setSuggestions([]);
   };
 
-  const promptStr = `homerocabrera@dev:${getPromptPath(currentDir)}$ `;
+  const promptStr = `moonsbow@dev:${getPromptPath(currentDir)}$ `;
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center bg-terminal-black pt-[40px] pb-[28px]">
@@ -604,7 +604,7 @@ export default function Terminal() {
             <span className="w-[10px] h-[10px] rounded-full bg-terminal-green inline-block" />
           </div>
           <div className="flex-1 text-center">
-            <span className="font-mono text-[12px] text-terminal-gray">homerocabrera@dev: ~/cv</span>
+            <span className="font-mono text-[12px] text-terminal-gray">moonsbow@dev: ~/cv</span>
           </div>
           <div className="shrink-0">
             <span className="font-mono text-[12px] text-terminal-gray-dark">bash</span>
