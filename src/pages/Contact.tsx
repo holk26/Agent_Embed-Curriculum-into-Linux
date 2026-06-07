@@ -12,13 +12,13 @@ const PROMPT = 'moonsbow@dev:~/cv$';
 const COMMAND = ' sendmail ' + RECIPIENT;
 
 const CONTACT = {
-  name: 'Homero Cabrera Araque',
-  location: 'Burnaby, BC, Canada',
+  name: 'Homero Cabrera',
+  location: 'Canada',
   phone: '(1) 604 754-6694',
   email: 'homero9726@gmail.com',
-  linkedin: 'linkedin.com/in/homero-cabrera-araque',
+  linkedin: 'linkedin.com/in/homero-dev',
   github: 'github.com/homero-cabrera',
-  linkedinUrl: 'https://linkedin.com/in/homero-cabrera-araque',
+  linkedinUrl: 'https://linkedin.com/in/homero-dev',
   githubUrl: 'https://github.com/homero-cabrera',
 };
 
