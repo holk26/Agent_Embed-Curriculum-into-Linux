@@ -1,13 +1,6 @@
-import type { ReactNode } from 'react';
+import type { CommandHandler } from './types';
 
-export interface CommandResult {
-  type: 'output' | 'error' | 'navigate';
-  content: string | ReactNode;
-  navigateTo?: string;
-  newDir?: string;
-}
-
-export type CommandHandler = (args: string[], currentDir: string, historyList?: string[]) => CommandResult;
+export type { CommandResult, CommandHandler } from './types';
 
 export function getPromptPath(currentDir: string): string {
   if (currentDir === '~') return '~';
@@ -16,9 +9,10 @@ export function getPromptPath(currentDir: string): string {
 }
 
 const ALL_COMMANDS = [
-  'about', 'cat', 'cd', 'clear', 'contact', 'contact-form', 'date',
-  'education', 'experience', 'exit', 'help', 'history', 'languages', 'ls', 'logout',
-  'neofetch', 'projects', 'pwd', 'skills', 'tree', 'whoami'
+  'about', 'cal', 'cat', 'cd', 'clear', 'contact', 'contact-form', 'cowsay', 'curl', 'date',
+  'echo', 'education', 'experience', 'exit', 'fortune', 'hackerman', 'help', 'history', 'languages', 'ls', 'logout',
+  'man', 'matrix', 'mkdir', 'neofetch', 'pong', 'ps', 'projects', 'pwd', 'reboot', 'rm', 'shutdown', 'skills', 'sl', 'snake', 'ssh', 'sudo',
+  'theme', 'top', 'touch', 'tree', 'uname', 'uptime', 'who', 'whoami'
 ];
 
 const DIRS_ROOT = ['certifications/', 'education/', 'experience/', 'projects/'];
@@ -63,6 +57,161 @@ function formatLsLine(perms: string, links: string, user: string, group: string,
   return `${perms}  ${links.padStart(2)} ${user} ${group} ${size.padStart(6)} Jan 10 09:00 ${name}`;
 }
 
+function formatUptime(): string {
+  const now = Date.now();
+  const start = (typeof window !== 'undefined' && (window as any).__terminalStartTime) ? (window as any).__terminalStartTime : now;
+  const diff = now - start;
+  const hours = Math.floor(diff / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  const loads = [0.52, 0.58, 0.49];
+  if (hours > 0) {
+    return `up ${hours} hours, ${mins} mins, 3 users, load average: ${loads.join(', ')}`;
+  }
+  return `up ${mins} mins, 3 users, load average: ${loads.join(', ')}`;
+}
+
+function generateCal(): string {
+  const now = new Date();
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const title = `${monthNames[month]} ${year}`;
+  const lines: string[] = [];
+  lines.push('    ' + title);
+  lines.push('Su Mo Tu We Th Fr Sa');
+
+  let row = ' '.repeat(firstDay * 3);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dayStr = d.toString().padStart(2, ' ');
+    if ((firstDay + d - 1) % 7 === 0 && d !== 1) {
+      lines.push(row.trimEnd());
+      row = dayStr + ' ';
+    } else {
+      row += dayStr + ' ';
+    }
+  }
+  if (row.trim()) lines.push(row.trimEnd());
+  return lines.join('\n');
+}
+
+function cowsayText(text: string): string {
+  const msg = text || 'moo';
+  const len = Math.min(msg.length, 38);
+  const border = '-'.repeat(len + 2);
+  const padded = msg.padEnd(len, ' ');
+  return ` ${border}
+< ${padded} >
+ ${border}
+        \\   ^__^
+         \\  (oo)\\_______
+            (__)\\       )\\/\\
+                ||----w |
+                ||     ||`;
+}
+
+function slFrames(): string {
+  const frames = [
+`      ====        ________                ___________
+  _D _|  |_______/        \\__I_I_____===__|_________|
+   |(_)---  |   H\\________/ |   |        =|___ ___|   
+   /     |  |   H  |  |     |   |         ||_| |_||     
+  |      |  |   H  |__--------------------| [___] |   
+  | ________|___H__/__|_____/[][]~\\_______|       |   
+  |/ |   |-----------I_____I [][] []  D   |=======|___`,
+
+`        ====      ________              ___________
+    _D _|  |_____/        \\__I_I_____===__|_________|
+     |(_)---  | H\\________/ |   |      =|___ ___|     
+     /     |  | H  |  |     |   |       ||_| |_||       
+    |      |  | H  |__------------------| [___] |     
+    | ________|_H__/__|_____/[][]~\\_____|       |     
+    |/ |   |---------I_____I [][] []  D |=======|___`,
+
+`          ====    ________            ___________
+      _D _|  |___/        \\__I_I_____===__|_________|
+       |(_)---  |\\________/ |   |    =|___ ___|       
+       /     |  |  |  |     |   |     ||_| |_||         
+      |      |  |  |__----------------| [___] |       
+      | ________|__/__|_____/[][]~\\__|       |       
+      |/ |   |-------I_____I [][] []  D=======|___`,
+
+`            ====  ________          ___________
+        _D _|  |_ /        \\__I_I_____===__|_________|
+         |(_)---  |________/ |   |  =|___ ___|         
+         /     |  ||  |     |   |   ||_| |_||           
+        |      |  ||__--------------| [___] |         
+        | ________|/__|_____/[][]~\\|       |         
+        |/ |   |-----I_____I [][] []D=======|___`,
+
+`              =====_______        ___________
+          _D _|  | |        \\__I_I_____===__|_________|
+           |(_)---  |________/ |   |=|___ ___|           
+           /     |  ||  |     |   | ||_| |_||             
+          |      |  ||__------------| [___] |           
+          | ________|/__|_____/[][]~|       |           
+          |/ |   |---I_____I [][] []=======|___`
+  ];
+  return frames.join('\n\n');
+}
+
+const FORTUNES = [
+  'Talk is cheap. Show me the code. — Linus Torvalds',
+  'Programs must be written for people to read, and only incidentally for machines to execute. — Harold Abelson',
+  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler',
+  'First, solve the problem. Then, write the code. — John Johnson',
+  'Experience is the name everyone gives to their mistakes. — Oscar Wilde',
+  'Knowledge is power. — Francis Bacon',
+  'Simplicity is the soul of efficiency. — Austin Freeman',
+  'Code is like humor. When you have to explain it, it’s bad. — Cory House',
+  'Fix the cause, not the symptom. — Steve Maguire',
+  'Make it work, make it right, make it fast. — Kent Beck',
+];
+
+const MAN_PAGES: Record<string, string> = {
+  about: 'about - display personal information and summary',
+  cal: 'cal - display a simple ASCII calendar of the current month',
+  cat: 'cat [FILE] - concatenate and display file contents',
+  cd: 'cd [DIR] - change the current directory',
+  clear: 'clear - clear the terminal screen',
+  contact: 'contact - show contact information and links',
+  'contact-form': "contact-form - open the sendmail contact form",
+  cowsay: 'cowsay [TEXT] - ASCII cow with a speech bubble',
+  curl: 'curl [URL] - simulate a file download with progress bar',
+  date: 'date - display current date and time',
+  echo: 'echo [TEXT] - display a line of text',
+  education: 'education - list education history',
+  experience: 'experience - show work experience',
+  exit: 'exit - exit the terminal session',
+  fortune: 'fortune - print a random developer quote',
+  help: 'help - show available commands',
+  history: 'history - show command history',
+  languages: 'languages - display language proficiency',
+  ls: 'ls [DIR] - list directory contents',
+  logout: 'logout - alias for exit',
+  man: 'man [COMMAND] - display manual page for a command',
+  mkdir: 'mkdir [DIR] - create a directory (read-only filesystem)',
+  neofetch: 'neofetch - display system info with ASCII art',
+  ps: 'ps - report a snapshot of current processes',
+  projects: 'projects - navigate to projects page',
+  pwd: 'pwd - print working directory',
+  rm: 'rm [FILE] - remove a file (read-only filesystem)',
+  skills: 'skills - display technical skills with proficiency bars',
+  sl: 'sl - display a steam locomotive animation',
+  ssh: 'ssh [HOST] - connect to a remote host via SSH',
+  sudo: 'sudo [COMMAND] - execute a command as another user',
+  top: 'top - display Linux processes',
+  touch: 'touch [FILE] - change file timestamps (read-only filesystem)',
+  tree: 'tree [DIR] - display directory tree',
+  uname: 'uname - print system information',
+  uptime: 'uptime - tell how long the system has been running',
+  who: 'who - show who is logged on',
+  whoami: 'whoami - print effective user ID',
+};
+
 export const commands: Record<string, CommandHandler> = {
   help: () => ({
     type: 'output',
@@ -72,20 +221,39 @@ export const commands: Record<string, CommandHandler> = {
 ║  Command          │ Description                                           ║
 ╠═══════════════════╪═══════════════════════════════════════════════════════╣
 ║  about            │ Display personal information and summary              ║
+║  cal              │ Display a calendar of the current month               ║
 ║  cat <file>       │ View file contents (try: about.txt, skills.txt)       ║
 ║  cd <dir>         │ Change directory                                      ║
 ║  clear            │ Clear the terminal screen                             ║
 ║  contact          │ Show contact information and links                    ║
+║  cowsay <text>    │ ASCII cow with a speech bubble                        ║
+║  curl <url>       │ Simulate a file download                              ║
 ║  date             │ Display current date and time                         ║
-║  education        │ List education history                                 ║
+║  echo <text>      │ Display a line of text                                ║
+║  education        │ List education history                                ║
 ║  experience       │ Show work experience                                  ║
+║  exit             │ Exit the terminal session                             ║
+║  fortune          │ Print a random developer quote                        ║
 ║  help             │ Show this help message                                ║
+║  history          │ Show command history                                  ║
 ║  ls [dir]         │ List directory contents                               ║
+║  man <cmd>        │ Show manual for a command                             ║
+║  mkdir <dir>      │ Create a directory                                    ║
 ║  neofetch         │ Display system info with ASCII art                    ║
+║  ps               │ Report a snapshot of current processes                ║
 ║  projects         │ Navigate to projects page                             ║
 ║  pwd              │ Print working directory                               ║
+║  rm <file>        │ Remove a file                                         ║
 ║  skills           │ Display technical skills with proficiency bars        ║
+║  sl               │ Steam locomotive animation                            ║
+║  ssh <host>       │ Connect to a remote host                              ║
+║  sudo <cmd>       │ Execute a command as superuser                        ║
+║  top              │ Display Linux processes                               ║
+║  touch <file>     │ Change file timestamps                                ║
 ║  tree [dir]       │ Display directory tree                                ║
+║  uname            │ Print system information                              ║
+║  uptime           │ Show how long the system has been running             ║
+║  who              │ Show who is logged on                                 ║
 ║  whoami           │ Display current user info                             ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 
@@ -245,7 +413,7 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
 
   experience: () => ({
     type: 'output',
-    content: `${header('WORK EXPERIENCE')}\n\n[1] Moonsbow.com — Senior Software Engineer\n    Canadá\n    JAN 2023 ───────── PRESENT\n    ─────────────────────────────────────────────────────────────────\n    • Leading full-stack development projects with React, TypeScript,\n      and Python.\n    • Developing AI-driven automation solutions and autonomous agents.\n    • Architecting scalable cloud solutions on Azure.\n    • Building APIs and integrations for business process optimization.\n\n[2] UFINET — Senior Software Developer\n    Colombia\n    JAN 2024 ───────── JUL 2024\n    ─────────────────────────────────────────────────────────────────\n    • Developed and optimized business applications using C# and\n      Power Apps.\n    • Created custom APIs to enhance workflow efficiency and system\n      interoperability.\n    • Collaborated with cross-functional teams to design and implement\n      new features.\n    • Automated routine processes, enhancing efficiency and accuracy.\n\n[3] AZTECA INTERNACIONAL INC — Software Developer\n    Bogotá, Colombia\n    OCT 2023 ───────── JAN 2024\n    ─────────────────────────────────────────────────────────────────\n    • Architected CI/CD pipelines to streamline development workflows.\n    • Developed AI-driven automation by integrating OpenAI/ChatGPT APIs.\n    • Optimized business processes through intelligent automation\n      solutions.\n    • Focused on improving efficiency, scalability, and system\n      functionality.\n\n[4] Digital Solutions 324 SL — .NET Developer\n    Barcelona, Spain\n    FEB 2023 ───────── MAR 2023\n    ─────────────────────────────────────────────────────────────────\n    • Developed .NET applications for business solutions.\n    • Collaborated with international teams on software development\n      projects.\n    • Implemented best practices for code quality and maintainability.\n\n[5] Telefónica — BO Automation & Multicountry Analysis\n    Bogotá, Colombia\n    MAR 2020 ───────── JAN 2023\n    ─────────────────────────────────────────────────────────────────\n    • Implemented automation solutions to streamline business\n      operations.\n    • Conducted multicountry analysis to support decision-making\n      processes.\n    • Developed reports and dashboards to provide actionable insights.\n    • Utilized Visual Studio, C#, and automation tools for\n      cross-country operations.\n\n[6] TOWN HALL — Analyst\n    Colombia\n    JAN 2018 ───────── DEC 2019\n    ─────────────────────────────────────────────────────────────────\n    • Analyzed data to support municipal projects and initiatives.\n    • Developed software tools to improve data collection and analysis.\n    • Collaborated with various departments to optimize workflows.\n\n${'━'.repeat(70)}`,
+    content: `${header('WORK EXPERIENCE')}\n\n[1] Moonsbow.com — Senior Software Engineer\n    Canadá\n    JAN 2023 ───────── PRESENT\n    ─────────────────────────────────────────────────────────────────\n    • Leading full-stack development projects with React, TypeScript,\n      and Python.\n    • Developing AI-driven automation solutions and autonomous agents.\n    • Architecting scalable cloud solutions on Azure.\n    • Building APIs and integrations for business process optimization.\n\n[2] UFINET — Senior Software Developer\n    Colombia\n    JAN 2024 ───────── JUL 2024\n    ─────────────────────────────────────────────────────────────────\n    • Developed and optimized business applications using C# and\n      Power Apps.\n    • Created custom APIs to enhance workflow efficiency and system\n      interoperability.\n    • Collaborated with cross-functional teams to design and implement\n      new features.\n    • Automated routine processes, enhancing efficiency and accuracy.\n\n[3] AZTECA INTERNACIONAL INC — Software Developer\n    Bogotá, Colombia\n    OCT 2023 ───────── JAN 2024\n    ─────────────────────────────────────────────────────────────────\n    • Architected CI/CD pipelines to streamline development workflows.\n    • Developed AI-driven automation by integrating OpenAI/ChatGPT APIs.\n    • Optimized business processes through intelligent automation\n      solutions.\n    • Focused on improving efficiency, scalability, and system\n      functionality.\n\n[4] Digital Solutions 324 SL — .NET Developer\n    Barcelona, Spain\n    FEB 2023 ───────── MAR 2023\n    ─────────────────────────────────────────────────────────────────\n    • Developed .NET applications for business solutions.\n    • Collaborated with international teams on software development\n      projects.\n    • Implemented best practices for code quality and maintainability.\n\n[5] Telefónica — BO Automation & Multicountry Analysis\n    Bogotá, Colombia\n    MAR 2020 ───────── JAN 2023\n    ─────────────────────────────────────────────────────────────────\n    • Led automation initiatives for business operations.\n    • Developed multicountry analysis tools and dashboards.\n    • Streamlined reporting and data processing workflows.\n\n[6] Town Hall — Systems Analyst & Developer\n    Bogotá, Colombia\n    JUL 2017 ───────── MAR 2020\n    ─────────────────────────────────────────────────────────────────\n    • Analyzed and developed information systems.\n    • Maintained and optimized existing software solutions.\n    • Provided technical support and system integration.\n\n${'━'.repeat(70)}`,
   }),
 
   education: () => ({
@@ -350,4 +518,225 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
     type: 'output',
     content: historyList.length === 0 ? 'No history yet.' : historyList.map((h, i) => ` ${(i + 1).toString().padStart(3)}  ${h}`).join('\n'),
   }),
+
+  /* ------------------------------------------------------------------ */
+  /*  New Commands                                                       */
+  /* ------------------------------------------------------------------ */
+
+  uname: () => ({
+    type: 'output',
+    content: 'moonsbow OS 6.8.0 x86_64 GNU/Linux',
+  }),
+
+  uptime: () => ({
+    type: 'output',
+    content: formatUptime(),
+  }),
+
+  who: () => ({
+    type: 'output',
+    content: `moonsbow   tty1   ${new Date().toUTCString()}`,
+  }),
+
+  echo: (args) => ({
+    type: 'output',
+    content: args.join(' '),
+  }),
+
+  cal: () => ({
+    type: 'output',
+    content: generateCal(),
+  }),
+
+  ps: () => ({
+    type: 'output',
+    content: `  PID TTY          TIME CMD\n    1 ?        00:00:01 systemd\n  215 tty1     00:00:00 bash\n  342 tty1     00:00:00 node\n  891 tty1     00:00:02 chrome\n 1023 ?        00:00:00 sshd\n 1456 tty1     00:00:00 vim\n 2100 ?        00:00:00 dockerd\n 2847 tty1     00:00:00 ps`,
+  }),
+
+  sudo: (args) => {
+    if (args.length === 0) {
+      return { type: 'error', content: 'sudo: no command specified' };
+    }
+    return {
+      type: 'error',
+      content: 'sudo: permission denied: you are not in the sudoers file. This incident will be reported.',
+    };
+  },
+
+  cowsay: (args) => ({
+    type: 'output',
+    content: cowsayText(args.join(' ')),
+  }),
+
+  sl: () => ({
+    type: 'output',
+    content: slFrames(),
+  }),
+
+  fortune: () => ({
+    type: 'output',
+    content: FORTUNES[Math.floor(Math.random() * FORTUNES.length)],
+  }),
+
+  curl: (args) => {
+    if (args.length === 0) {
+      return {
+        type: 'error',
+        content: "curl: try 'curl --help' or 'curl --manual' for more information",
+      };
+    }
+    const url = args[0];
+    return {
+      type: 'output',
+      content: `* Connected to ${url} port 443\n* ALPN: curl offers h2,http/1.1\n> GET / HTTP/2\n> Host: ${url}\n> User-Agent: curl/8.5.0\n> Accept: */*\n> \n< HTTP/2 200\n< content-type: text/html; charset=utf-8\n< content-length: 1337\n< \n{ [1337 bytes data]\n######################################################################## 100.0%\n* Connection #0 to host ${url} left intact`,
+    };
+  },
+
+  ssh: (args) => {
+    const host = args[0];
+    if (!host) {
+      return { type: 'error', content: 'ssh: usage: ssh [user@]hostname [command]' };
+    }
+    const knownHosts = ['github.com', 'localhost', 'dev.moonsbow.com'];
+    if (!knownHosts.includes(host)) {
+      return { type: 'error', content: `ssh: Could not resolve hostname ${host}: Name or service not known` };
+    }
+    return {
+      type: 'output',
+      content: `Connecting to ${host}...\nConnection established.\nHandshake complete (ECDSA).\nAuthenticating...\nAuthenticated.\n\nWelcome to Ubuntu 22.04.4 LTS (GNU/Linux 5.15.0 x86_64)\n\n * Documentation:  https://help.ubuntu.com\n * Management:     https://landscape.canonical.com\n * Support:        https://ubuntu.com/pro\n\n  System information as of ${new Date().toUTCString()}\n\n  System load:  0.52              Processes:           89\n  Usage of /:   34.2% of 50GB     Users logged in:     1\n  Memory usage: 42%               IPv4 address for eth0: 10.0.2.15\n  Swap usage:   0%\n\n0 updates can be applied immediately.\n\nLast login: ${new Date().toUTCString()} from 192.168.1.100`,
+    };
+  },
+
+  top: () => ({
+    type: 'output',
+    content: `top - ${new Date().toLocaleTimeString()} up ${formatUptime().replace('up ', '').split(',')[0]},  3 users,  load average: 0.52, 0.58, 0.49\nTasks:  89 total,   1 running,  88 sleeping,   0 stopped,   0 zombie\n%Cpu(s):  4.2 us,  2.1 sy,  0.0 ni, 93.2 id,  0.0 wa,  0.0 hi,  0.5 si,  0.0 st\nMiB Mem :   1024.0 total,    124.0 free,    456.0 used,    444.0 buff/cache\nMiB Swap:    512.0 total,    512.0 free,      0.0 used.    568.0 avail Mem\n\n  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n  342 moonsbow  20   0  612340  89012  23456 S   8.3   8.7   0:12.34 node\n  891 moonsbow  20   0 1245678 234567  45678 S   4.1  22.9   0:45.67 chrome\n 2100 root      20   0  456789  67890  12345 S   2.1   6.6   0:03.21 dockerd\n  215 moonsbow  20   0   23456   4567   1234 S   0.0   0.4   0:00.05 bash\n 1456 moonsbow  20   0   12345   3456    789 S   0.0   0.3   0:01.23 vim\n    1 root      20   0  167890  12345   6789 S   0.0   1.2   0:00.01 systemd\n 1023 root      20   0   34567   5678   2345 S   0.0   0.6   0:00.02 sshd`,
+  }),
+
+  man: (args) => {
+    const cmd = args[0];
+    if (!cmd) {
+      return { type: 'error', content: 'man: what manual page do you want?' };
+    }
+    const entry = MAN_PAGES[cmd];
+    if (!entry) {
+      return { type: 'error', content: `No manual entry for ${cmd}` };
+    }
+    return {
+      type: 'output',
+      content: `${header(cmd.toUpperCase())}\n\nNAME\n    ${entry}\n\nSYNOPSIS\n    ${entry.split(' - ')[0]}\n\nDESCRIPTION\n    ${entry.split(' - ')[1] || 'No detailed description available.'}\n\n${'━'.repeat(70)}`,
+    };
+  },
+
+  mkdir: (args) => {
+    const dir = args[0];
+    if (!dir) return { type: 'error', content: 'mkdir: missing operand' };
+    return { type: 'error', content: `mkdir: cannot create directory '${dir}': Permission denied` };
+  },
+
+  rm: (args) => {
+    const file = args[0];
+    if (!file) return { type: 'error', content: 'rm: missing operand' };
+    return { type: 'error', content: `rm: cannot remove '${file}': Permission denied` };
+  },
+
+  touch: (args) => {
+    const file = args[0];
+    if (!file) return { type: 'error', content: 'touch: missing file operand' };
+    return { type: 'error', content: `touch: cannot touch '${file}': Permission denied` };
+  },
+
+  snake: () => ({
+    type: 'navigate',
+    content: 'Launching snake.exe...',
+    navigateTo: '/snake',
+  }),
+
+  pong: () => ({
+    type: 'navigate',
+    content: 'Launching pong.exe...',
+    navigateTo: '/pong',
+  }),
+
+  matrix: () => ({
+    type: 'navigate',
+    content: 'Entering the Matrix...',
+    navigateTo: '/matrix',
+  }),
+
+  reboot: () => ({
+    type: 'navigate',
+    content: `[ OK ] Stopping target network
+[ OK ] Unmounting remote filesystems
+[ OK ] Stopping Network Manager
+[ OK ] Stopping OpenBSD Secure Shell server
+[ OK ] Stopping system logging service
+[ OK ] Stopping cron daemon
+[ OK ] Stopping target basic system
+[ OK ] Stopping Remain After Exit service
+[ OK ] Stopping D-Bus System Message Bus
+[ OK ] Stopped target basic system
+[ OK ] Stopped target paths
+[ OK ] Stopped target slices
+[ OK ] Stopped target sockets
+[ OK ] Reached target shutdown
+[ OK ] Rebooting...`,
+    navigateTo: '/',
+  }),
+
+  shutdown: () => ({
+    type: 'navigate',
+    content: `[ OK ] Stopping target network
+[ OK ] Unmounting remote filesystems
+[ OK ] Stopping Network Manager
+[ OK ] Stopping OpenBSD Secure Shell server
+[ OK ] Stopping system logging service
+[ OK ] Stopping cron daemon
+[ OK ] Stopping target basic system
+[ OK ] Reached target shutdown
+[ OK ] Powering off...`,
+    navigateTo: '/shutdown',
+  }),
+
+  hackerman: () => {
+    const lines: string[] = [];
+    const actions = ['SCANNING', 'BYPASSING', 'INJECTING', 'DECRYPTING', 'HANDSHAKING', 'UPLOADING'];
+    const statuses = ['OK', 'WARN', 'OK', 'OK', 'OK'];
+    for (let i = 0; i < 20; i++) {
+      const ip = `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+      const port = Math.floor(Math.random() * 65535);
+      const action = actions[Math.floor(Math.random() * actions.length)];
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      lines.push(`[${new Date().toISOString().split('T')[1].slice(0, 8)}] ${action} ${ip}:${port} ... ${status}`);
+    }
+    lines.push('');
+    lines.push('██████████████████████████████████████████████████');
+    lines.push('██                                              ██');
+    lines.push('██         A C C E S S   G R A N T E D          ██');
+    lines.push('██                                              ██');
+    lines.push('██████████████████████████████████████████████████');
+    return {
+      type: 'output',
+      content: lines.join('\n'),
+    };
+  },
+
+  theme: (args) => {
+    const available = ['green', 'amber', 'white', 'red', 'blue'];
+    const t = args[0];
+    if (!t) {
+      return {
+        type: 'output',
+        content: `Available themes: ${available.join(', ')}
+Usage: theme <name>`,
+      };
+    }
+    if (!available.includes(t)) {
+      return { type: 'error', content: `theme: '${t}' is not a valid theme. Available: ${available.join(', ')}` };
+    }
+    return {
+      type: 'output',
+      content: `Theme changed to: ${t}`,
+      theme: t,
+    };
+  },
 };

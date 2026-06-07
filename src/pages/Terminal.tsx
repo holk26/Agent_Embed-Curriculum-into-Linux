@@ -1,341 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { commands, getCompletions, getPromptPath } from './terminal-data';
-
-/* ------------------------------------------------------------------ */
-/*  Types                                                              */
-/* ------------------------------------------------------------------ */
-
-interface Line {
-  id: string;
-  type: 'command' | 'output' | 'error';
-  content: string;
-  commandName?: string;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Output Renderers                                                   */
-/* ------------------------------------------------------------------ */
-
-function LsOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        const isDir = line.startsWith('d');
-        const isHidden = line.endsWith(' .') || line.endsWith(' ..');
-        const parts = line.split(' ').filter(Boolean);
-        const name = parts[parts.length - 1] || '';
-        const rest = line.slice(0, line.lastIndexOf(name)).replace(/\s+$/, '');
-        return (
-          <div key={i}>
-            <span className="text-terminal-gray">{rest}</span>
-            <span className={isHidden ? 'text-terminal-gray-dark' : isDir ? 'text-terminal-blue font-bold' : 'text-terminal-cyan'}>
-              {name}
-            </span>
-          </div>
-        );
-      })}
-    </pre>
-  );
-}
-
-function TreeOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed text-terminal-gray">
-      {content.split('\n').map((line, i) => {
-        const isDir = line.trim().endsWith('/');
-        const isSummary = line.includes('directories') || line.includes('files');
-        const isTreeChar = /^[│├└──\s]+$/.test(line.trim());
-        if (isTreeChar) return <div key={i} className="text-terminal-gray">{line}</div>;
-        if (isSummary) return <div key={i} className="text-terminal-gray">{line}</div>;
-        const nameMatch = line.match(/[├└]──\s(.+)$/);
-        if (!nameMatch) return <div key={i}>{line}</div>;
-        const prefix = line.slice(0, line.lastIndexOf(nameMatch[1]));
-        const name = nameMatch[1];
-        return (
-          <div key={i}>
-            <span>{prefix}</span>
-            <span className={isDir ? 'text-terminal-blue font-bold' : 'text-terminal-cyan'}>
-              {name}
-            </span>
-          </div>
-        );
-      })}
-    </pre>
-  );
-}
-
-function HelpOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed text-terminal-gray">
-      {content.split('\n').map((line, i) => {
-        if (line.includes('═')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.includes('║')) {
-          const cmdMatch = line.match(/║\s{2}(\w[\w\s-]*)/);
-          if (cmdMatch) {
-            const idx = line.indexOf(cmdMatch[1]);
-            return (
-              <div key={i}>
-                <span className="text-terminal-green">{line.slice(0, idx)}</span>
-                <span className="text-terminal-cyan font-bold">{cmdMatch[1]}</span>
-                <span className="text-terminal-green">{line.slice(idx + cmdMatch[1].length)}</span>
-              </div>
-            );
-          }
-          return <div key={i} className="text-terminal-green">{line}</div>;
-        }
-        if (line.includes('Tip:')) return <div key={i} className="text-terminal-amber">{line}</div>;
-        return <div key={i}>{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function NeofetchOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[12px] md:text-[13px] leading-snug">
-      {content.split('\n').map((line, i) => {
-        const colonIdx = line.indexOf(':');
-        if (colonIdx > 40 && colonIdx < 60) {
-          const label = line.slice(0, colonIdx + 1);
-          const value = line.slice(colonIdx + 1);
-          return (
-            <div key={i}>
-              <span className="text-terminal-green font-bold">{label}</span>
-              <span className="text-terminal-white">{value}</span>
-            </div>
-          );
-        }
-        return <div key={i} className="text-terminal-green">{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function SkillsOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.includes('─') && !line.includes('█')) return <div key={i} className="text-terminal-gray">{line}</div>;
-        if (line.includes('█') || line.includes('░')) {
-          const labelMatch = line.match(/^(.{24})\s/);
-          const pctMatch = line.match(/(\d+)%$/);
-          const barStart = line.indexOf('█');
-          const barEnd = pctMatch ? line.lastIndexOf(pctMatch[1] + '%') : line.length;
-          return (
-            <div key={i}>
-              {labelMatch && <span className="text-terminal-white">{labelMatch[1]}</span>}
-              {barStart > -1 && (
-                <>
-                  <span className="text-terminal-green">{line.slice(barStart, barEnd)}</span>
-                  {pctMatch && <span className="text-terminal-gray">{'  ' + pctMatch[1] + '%'}</span>}
-                </>
-              )}
-            </div>
-          );
-        }
-        if (line.trim() && !line.startsWith(' ')) return <div key={i} className="text-terminal-amber font-bold">{line}</div>;
-        return <div key={i} className="text-terminal-gray">{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function AboutOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.startsWith('Name:') || line.startsWith('Location:') || line.startsWith('Phone:') || line.startsWith('Email:') || line.startsWith('Status:')) {
-          const colonIdx = line.indexOf(':');
-          return (
-            <div key={i}>
-              <span className="text-terminal-white font-bold">{line.slice(0, colonIdx + 1)}</span>
-              <span className="text-terminal-gray">{line.slice(colonIdx + 1)}</span>
-            </div>
-          );
-        }
-        if (line.includes('→')) {
-          const parts = line.split('→');
-          return (
-            <div key={i}>
-              <span className="text-terminal-green">{parts[0]}</span>
-              <span className="text-terminal-blue underline">{parts[1]}</span>
-            </div>
-          );
-        }
-        return <div key={i} className="text-terminal-gray">{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function ExperienceOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.includes('────')) return <div key={i} className="text-terminal-gray-dark">{line}</div>;
-        if (line.startsWith('[')) {
-          const close = line.indexOf(']');
-          return (
-            <div key={i}>
-              <span className="text-terminal-green font-bold">{line.slice(0, close + 1)}</span>
-              <span className="text-terminal-white font-bold">{line.slice(close + 1)}</span>
-            </div>
-          );
-        }
-        if (line.includes('─') && line.includes('JAN') || line.includes('MAR') || line.includes('DEC')) {
-          return <div key={i} className="text-terminal-amber">{line}</div>;
-        }
-        if (line.trim().startsWith('•')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.trim() && !line.startsWith('    ') && !line.startsWith('  •')) {
-          return <div key={i} className="text-terminal-cyan">{line}</div>;
-        }
-        return <div key={i} className="text-terminal-gray">{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function EducationOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.includes('────')) return <div key={i} className="text-terminal-gray-dark">{line}</div>;
-        if (line.startsWith('[')) {
-          const close = line.indexOf(']');
-          return (
-            <div key={i}>
-              <span className="text-terminal-green font-bold">{line.slice(0, close + 1)}</span>
-              <span className="text-terminal-white font-bold">{line.slice(close + 1)}</span>
-            </div>
-          );
-        }
-        if (line.includes('─') && (line.includes('JUL') || line.includes('DEC') || line.includes('2021') || line.includes('2025'))) {
-          return <div key={i} className="text-terminal-amber">{line}</div>;
-        }
-        if (line.trim().startsWith('•')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.trim() && !line.startsWith('    ') && !line.trim().startsWith('•') && !line.includes('──')) {
-          return <div key={i} className="text-terminal-cyan">{line}</div>;
-        }
-        return <div key={i} className="text-terminal-gray">{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function LanguagesOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.startsWith('Spanish')) {
-          return (
-            <div key={i}>
-              <span className="text-terminal-white">Spanish    </span>
-              <span className="text-terminal-green">{line.replace('Spanish    ', '').replace('  Native', '')}</span>
-              <span className="text-terminal-gray">  Native</span>
-            </div>
-          );
-        }
-        if (line.startsWith('English')) {
-          return (
-            <div key={i}>
-              <span className="text-terminal-white">English    </span>
-              <span className="text-terminal-amber">{line.replace('English    ', '').replace('  Basic', '')}</span>
-              <span className="text-terminal-gray">  Basic</span>
-            </div>
-          );
-        }
-        return <div key={i} className="text-terminal-gray">{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function ContactOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
-        if (line.includes(':') && (line.includes('Name:') || line.includes('Location:') || line.includes('Phone:') || line.includes('Email:') || line.includes('LinkedIn:') || line.includes('GitHub:') || line.includes('Work Status:') || line.includes('Best contact'))) {
-          const colonIdx = line.indexOf(':');
-          return (
-            <div key={i}>
-              <span className="text-terminal-white font-bold">{line.slice(0, colonIdx + 1)}</span>
-              <span className="text-terminal-gray">{line.slice(colonIdx + 1)}</span>
-            </div>
-          );
-        }
-        if (line.includes("'contact-form'")) return <div key={i} className="text-terminal-amber">{line}</div>;
-        return <div key={i} className="text-terminal-gray">{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function CertOutput({ content }: { content: string }) {
-  return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
-      {content.split('\n').map((line, i) => {
-        if (line.includes('├──') || line.includes('└──')) {
-          const arrow = line.includes('├──') ? '├── ' : '└── ';
-          const rest = line.split(arrow)[1] || '';
-          const parts = rest.split(/\s{2,}/);
-          return (
-            <div key={i}>
-              <span className="text-terminal-gray">{arrow}</span>
-              <span className="text-terminal-cyan">{parts[0]}</span>
-              <span className="text-terminal-gray">{'  ' + (parts[1] || '')}</span>
-              <span className="text-terminal-amber">{'  ' + (parts[2] || '')}</span>
-            </div>
-          );
-        }
-        return <div key={i} className="text-terminal-blue font-bold">{line}</div>;
-      })}
-    </pre>
-  );
-}
-
-function DefaultOutput({ content, type }: { content: string; type: string }) {
-  if (type === 'error') {
-    return <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] text-terminal-red leading-relaxed">{content}</pre>;
-  }
-  return <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] text-terminal-gray leading-relaxed">{content}</pre>;
-}
-
-function OutputRenderer({ line }: { line: Line }) {
-  if (line.type === 'command') {
-    return <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] text-terminal-white leading-relaxed">{line.content}</pre>;
-  }
-  if (line.type === 'error') {
-    return <DefaultOutput content={line.content} type="error" />;
-  }
-
-  switch (line.commandName) {
-    case 'ls': return <LsOutput content={line.content} />;
-    case 'tree': return <TreeOutput content={line.content} />;
-    case 'help': return <HelpOutput content={line.content} />;
-    case 'neofetch': return <NeofetchOutput content={line.content} />;
-    case 'skills': return <SkillsOutput content={line.content} />;
-    case 'about': return <AboutOutput content={line.content} />;
-    case 'cat':
-      if (line.content.includes('ABOUT HOMERO CABRERA')) return <AboutOutput content={line.content} />;
-      if (line.content.includes('TECHNICAL SKILLS MATRIX')) return <SkillsOutput content={line.content} />;
-      if (line.content.includes('CONTACT INFORMATION')) return <ContactOutput content={line.content} />;
-      if (line.content.includes('LANGUAGE PROFICIENCY')) return <LanguagesOutput content={line.content} />;
-      if (line.content.includes('certifications/')) return <CertOutput content={line.content} />;
-      return <DefaultOutput content={line.content} type="output" />;
-    case 'experience': return <ExperienceOutput content={line.content} />;
-    case 'education': return <EducationOutput content={line.content} />;
-    case 'contact': return <ContactOutput content={line.content} />;
-    case 'languages': return <LanguagesOutput content={line.content} />;
-    default: return <DefaultOutput content={line.content} type="output" />;
-  }
-}
+import { commands, getCompletions, getPromptPath, loadHistory, saveHistory, loadDir, saveDir } from '@/terminal';
+import { OutputRenderer } from '@/terminal/renderers';
+import { useTheme } from '@/components/effects/ThemeProvider';
+import type { Line } from '@/terminal/types';
 
 /* ------------------------------------------------------------------ */
 /*  Main Terminal Component                                            */
@@ -343,14 +11,15 @@ function OutputRenderer({ line }: { line: Line }) {
 
 export default function Terminal() {
   const navigate = useNavigate();
+  const { setTheme } = useTheme();
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [lines, setLines] = useState<Line[]>([]);
   const [input, setInput] = useState('');
-  const [cmdHistory, setCmdHistory] = useState<string[]>([]);
+  const [cmdHistory, setCmdHistory] = useState<string[]>(() => loadHistory());
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [currentDir, setCurrentDir] = useState('~/cv');
+  const [currentDir, setCurrentDir] = useState(() => loadDir());
   const [isTyping, setIsTyping] = useState(false);
   const [cursorVisible, setCursorVisible] = useState(true);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -446,7 +115,11 @@ export default function Terminal() {
     if (!trimmed) return;
 
     // Add to history
-    setCmdHistory(prev => [...prev, trimmed]);
+    setCmdHistory(prev => {
+      const next = [...prev, trimmed];
+      saveHistory(next);
+      return next;
+    });
     setHistoryIndex(-1);
 
     // Add command line to scrollback
@@ -480,18 +153,24 @@ export default function Terminal() {
     }
 
     // Special: handle navigation commands
-    if (cmdName === 'projects' || cmdName === 'contact-form') {
+    const navCommands = ['projects', 'contact-form', 'snake', 'pong', 'matrix', 'reboot', 'shutdown'];
+    if (navCommands.includes(cmdName)) {
       const result = handler(args, currentDir);
       await typeText(result.content as string, 'output', 15);
-      await sleep(600);
+      await sleep(cmdName === 'reboot' || cmdName === 'shutdown' ? 1200 : 600);
       navigate(result.navigateTo || '/');
       return;
     }
 
     const result = handler(args, currentDir, cmdHistory);
 
+    if (result.theme) {
+      setTheme(result.theme as any);
+    }
+
     if (result.newDir) {
       setCurrentDir(result.newDir);
+      saveDir(result.newDir);
     }
 
     if (result.content === '__CLEAR__') {
@@ -614,9 +293,24 @@ export default function Terminal() {
         {/* Scrollback area */}
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto p-3 md:p-4 font-mono text-[13px] md:text-[15px] leading-relaxed"
+          className="flex-1 overflow-y-auto p-3 md:p-4 font-mono text-[13px] md:text-[15px] leading-relaxed scrollbar-thin scrollbar-track-terminal-black scrollbar-thumb-terminal-green-dim"
           style={{ maxHeight: 'calc(100dvh - 40px - 28px - 32px)' }}
         >
+          <style>{`
+            .scrollbar-thin::-webkit-scrollbar {
+              width: 6px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-track {
+              background: #0C0C0C;
+            }
+            .scrollbar-thin::-webkit-scrollbar-thumb {
+              background: #2D8C16;
+              border-radius: 3px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+              background: #4AF626;
+            }
+          `}</style>
           {lines.map((line) => (
             <div key={line.id} className="mb-1">
               <OutputRenderer line={line} />

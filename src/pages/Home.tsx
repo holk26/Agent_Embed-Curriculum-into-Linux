@@ -104,9 +104,29 @@ function parseBootLine(line: string): { timestamp: string; message: string; hasO
   return { timestamp, message, hasOk };
 }
 
+const BOOT_KEY = 'moonsbow_boot_complete';
+
+function hasBooted(): boolean {
+  try {
+    return sessionStorage.getItem(BOOT_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function markBooted(): void {
+  try {
+    sessionStorage.setItem(BOOT_KEY, 'true');
+  } catch {
+    // ignore
+  }
+}
+
 export default function Home() {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState<'boot' | 'login' | 'password' | 'success' | 'transition'>('boot');
+  const [phase, setPhase] = useState<'boot' | 'login' | 'password' | 'success' | 'transition'>(
+    hasBooted() ? 'login' : 'boot'
+  );
   const [visibleLines, setVisibleLines] = useState<number>(0);
   const [loginInput, setLoginInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
@@ -128,6 +148,13 @@ export default function Home() {
     }, 530);
     return () => clearInterval(interval);
   }, []);
+
+  // Mark boot as completed when reaching login phase
+  useEffect(() => {
+    if (phase === 'login') {
+      markBooted();
+    }
+  }, [phase]);
 
   // Auto-scroll to bottom during boot
   useEffect(() => {

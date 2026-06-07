@@ -2,9 +2,11 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 const tabs = [
   { path: '/', label: 'home.md', num: '1' },
+  { path: '/blog', label: 'blog.md', num: '5' },
   { path: '/terminal', label: 'terminal.sh', num: '2' },
   { path: '/projects', label: 'projects/', num: '3' },
   { path: '/contact', label: 'contact.txt', num: '4' },
+  { path: '/settings', label: 'settings.conf', num: '6' },
 ];
 
 export default function Navbar() {
@@ -24,11 +26,14 @@ export default function Navbar() {
             <NavLink
               key={tab.path}
               to={tab.path}
+              onClick={(e) => {
+                if (isActive) e.preventDefault();
+              }}
               className={
                 'relative flex items-center h-[36px] px-4 font-mono text-[12px] whitespace-nowrap transition-colors duration-150 ' +
                 (isActive
-                  ? 'bg-terminal-black text-terminal-green border-t-2 border-terminal-green'
-                  : 'text-terminal-gray hover:text-terminal-white')
+                  ? 'bg-terminal-black text-terminal-green border-t-2 border-terminal-green cursor-default'
+                  : 'text-terminal-gray hover:text-terminal-white cursor-pointer')
               }
             >
               <span className="mr-1 opacity-60">[{tab.num}]</span>
