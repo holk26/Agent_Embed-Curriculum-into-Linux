@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const BOOT_LINES = [
   '[    0.000000] Linux version 6.8.0-homero (build@cv.x.moonsbow.com)',
@@ -124,6 +125,7 @@ function markBooted(): void {
 
 export default function Home() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [phase, setPhase] = useState<'boot' | 'login' | 'password' | 'success' | 'transition'>(
     hasBooted() ? 'login' : 'boot'
   );
@@ -134,8 +136,8 @@ export default function Home() {
   const [skipHintVisible, setSkipHintVisible] = useState(true);
   const [accelerated, setAccelerated] = useState(false);
   const [flashPhase, setFlashPhase] = useState<'none' | 'white' | 'black' | 'message'>('none');
-  const [_typingLogin, setTypingLogin] = useState(false);
-  const [_typingPassword, setTypingPassword] = useState(false);
+  const [typingLogin, setTypingLogin] = useState(false);
+  const [typingPassword, setTypingPassword] = useState(false);
   const bootTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const loginTypedRef = useRef(false);
@@ -234,6 +236,18 @@ export default function Home() {
       setTimeout(typeChar, 40);
     }
   }, [phase]);
+
+  // On mobile, automatically advance from login to password once the
+  // username has finished typing. There is no physical keyboard available
+  // to press Enter, so the flow must continue without user input.
+  useEffect(() => {
+    if (phase === 'login' && isMobile && loginInput === 'moonsbow' && !typingLogin) {
+      const t = setTimeout(() => {
+        setPhase('password');
+      }, 300);
+      return () => clearTimeout(t);
+    }
+  }, [phase, isMobile, loginInput, typingLogin]);
 
   // Success -> transition
   useEffect(() => {
