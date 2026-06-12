@@ -137,7 +137,7 @@ export default function Home() {
   const [accelerated, setAccelerated] = useState(false);
   const [flashPhase, setFlashPhase] = useState<'none' | 'white' | 'black' | 'message'>('none');
   const [typingLogin, setTypingLogin] = useState(false);
-  const [typingPassword, setTypingPassword] = useState(false);
+  const [_typingPassword, setTypingPassword] = useState(false);
   const bootTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const loginTypedRef = useRef(false);
