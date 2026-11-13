@@ -3,23 +3,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 /* ─── Types ─── */
-type FormStep = 'to' | 'from' | 'subject' | 'body' | 'sending' | 'success' | 'cancelled';
+type FormStep = 'form' | 'sending' | 'success' | 'cancelled';
 type Phase = 'boot' | 'typing_prompt' | 'typing_command' | 'form' | 'waiting';
 
 /* ─── Constants ─── */
-const RECIPIENT = 'contact@cv.x.moonsbow.com';
+const RECIPIENT = 'homero9726@gmail.com';
 const PROMPT = 'moonsbow@dev:~/cv$';
 const COMMAND = ' sendmail ' + RECIPIENT;
 
 const CONTACT = {
   name: 'Homero Cabrera',
-  location: 'Canada',
-  phone: '(1) 604 754-6694',
+  location: 'Vancouver, BC, Canada · Bogotá, Colombia',
+  phone: '+1 (604) 754-6694',
   email: 'homero9726@gmail.com',
   linkedin: 'linkedin.com/in/homero-dev',
-  github: 'github.com/homero-cabrera',
+  github: 'github.com/holk26',
   linkedinUrl: 'https://linkedin.com/in/homero-dev',
-  githubUrl: 'https://github.com/homero-cabrera',
+  githubUrl: 'https://github.com/holk26',
 };
 
 /* ─── Sub-components ─── */
@@ -58,6 +58,7 @@ function FieldLine({
   onKeyDown,
   inputRef,
   type = 'text',
+  autoFocus = false,
 }: {
   label: string;
   value: string;
@@ -66,6 +67,7 @@ function FieldLine({
   onKeyDown: (e: React.KeyboardEvent) => void;
   inputRef?: React.RefObject<HTMLInputElement | null>;
   type?: string;
+  autoFocus?: boolean;
 }) {
   return (
     <div
@@ -86,7 +88,7 @@ function FieldLine({
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={onKeyDown}
             className="w-full bg-transparent text-terminal-white outline-none font-mono text-[15px] leading-[1.6] p-0 border-0"
-            autoFocus
+            autoFocus={autoFocus}
             spellCheck={false}
             autoComplete="off"
           />
@@ -105,12 +107,14 @@ function BodyField({
   onChange,
   onKeyDown,
   textareaRef,
+  autoFocus = false,
 }: {
   value: string;
   isActive: boolean;
   onChange: (val: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   textareaRef?: React.RefObject<HTMLTextAreaElement | null>;
+  autoFocus?: boolean;
 }) {
   return (
     <div className={isActive ? 'bg-[rgba(74,246,38,0.04)] px-1 -mx-1 rounded' : ''}>
@@ -120,10 +124,10 @@ function BodyField({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
         className="w-full bg-transparent text-terminal-white outline-none font-mono text-[15px] leading-[1.6] p-0 border-0 resize-none min-h-[120px]"
-        autoFocus={isActive}
+        autoFocus={autoFocus}
         spellCheck={false}
         autoComplete="off"
-        placeholder=""
+        placeholder="Type your message here..."
       />
       {isActive && (
         <div className="flex items-center gap-1 mt-1">
@@ -299,8 +303,10 @@ function ContactCard() {
       {/* Status */}
       <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[12px] text-terminal-gray">
         <span>
-          Work Status:{" "}
-          <span className="text-terminal-amber">Open Work Permit Holder</span>
+          Work authorization:{" "}
+          <span className="text-terminal-amber">
+            authorized to work in Colombia · in Canada requires employer sponsorship
+          </span>
         </span>
         <span>
           Availability:{" "}
@@ -318,18 +324,6 @@ function ContactCard() {
   );
 }
 
-function LangIndicator() {
-  return (
-    <div className="flex items-center justify-end w-full max-w-[800px] mx-auto mt-3 mb-1">
-      <div className="flex items-center gap-1 font-mono text-[11px] text-terminal-gray">
-        <span className="text-terminal-green font-bold">ES</span>
-        <span>/</span>
-        <span>EN</span>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Main Page ─── */
 
 export default function Contact() {
@@ -337,7 +331,7 @@ export default function Contact() {
 
   /* Animation & form state */
   const [phase, setPhase] = useState<Phase>('boot');
-  const [step, setStep] = useState<FormStep>('to');
+  const [step, setStep] = useState<FormStep>('form');
   const [formData, setFormData] = useState({
     to: RECIPIENT,
     from: '',
@@ -351,6 +345,7 @@ export default function Contact() {
 
   /* Refs */
   const inputRef = useRef<HTMLInputElement>(null);
+  const subjectRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   /* ─── Boot / typing sequence ─── */
@@ -391,12 +386,10 @@ export default function Contact() {
 
   /* ─── Focus management ─── */
   useEffect(() => {
-    if (step === 'to' || step === 'from' || step === 'subject') {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    } else if (step === 'body') {
-      setTimeout(() => textareaRef.current?.focus(), 50);
+    if (phase === 'form' && step === 'form') {
+      setTimeout(() => inputRef.current?.focus(), 60);
     }
-  }, [step]);
+  }, [phase, step]);
 
   /* ─── Sending animation ─── */
   useEffect(() => {
@@ -428,8 +421,7 @@ export default function Contact() {
   /* ─── Keyboard handlers ─── */
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (phase !== 'form') return;
-      if (step === 'sending' || step === 'success' || step === 'cancelled') return;
+      if (phase !== 'form' || step !== 'form') return;
 
       if (e.ctrlKey && e.key === 'd') {
         e.preventDefault();
@@ -441,48 +433,35 @@ export default function Contact() {
         handleCancel();
         return;
       }
-      if (e.key === 'Enter') {
-        if (step === 'body') {
-          if (!e.shiftKey) {
-            e.preventDefault();
-            handleSubmit();
-          }
-        } else {
-          e.preventDefault();
-          advanceField();
-        }
-      }
     },
     [phase, step, formData]
   );
 
-  const advanceField = () => {
-    setError('');
-    if (step === 'to') {
-      setStep('from');
-    } else if (step === 'from') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (formData.from && !emailRegex.test(formData.from)) {
-        setError('sendmail: invalid email format');
-        return;
-      }
-      setStep('subject');
-    } else if (step === 'subject') {
-      setStep('body');
-    }
-  };
-
   const handleSubmit = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.from.trim()) {
       setError('sendmail: From field is required');
+      return;
+    }
+    if (!emailRegex.test(formData.from.trim())) {
+      setError('sendmail: invalid email format in From field');
+      return;
+    }
+    if (!formData.body.trim()) {
+      setError('sendmail: message body is required');
       return;
     }
     setError('');
     setSendingLines([]);
     setStep('sending');
     setPhase('waiting');
-    // Log for demo purposes
+    // Open the visitor's email client with the message pre-filled — the site
+    // is a static SPA with no backend, so mailto is the delivery mechanism.
+    const subject = formData.subject.trim() || 'Contact from cv.x.moonsbow.com';
+    const body = `${formData.body.trim()}\n\n— ${formData.from.trim()}`;
+    const mailto = `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     console.log('[sendmail] Message submitted:', formData);
+    window.location.href = mailto;
   };
 
   const handleCancel = () => {
@@ -506,7 +485,7 @@ export default function Contact() {
         e.preventDefault();
         // Reset form
         setFormData({ to: RECIPIENT, from: '', subject: '', body: '' });
-        setStep('to');
+        setStep('form');
         setPhase('form');
       }
     };
@@ -521,9 +500,6 @@ export default function Contact() {
   return (
     <div className="min-h-[100dvh] bg-terminal-black text-terminal-white font-mono">
       <div className="max-w-[900px] mx-auto px-4 py-6 md:py-10">
-        {/* Language indicator */}
-        <LangIndicator />
-
         {/* Terminal Window */}
         <TerminalWindow>
           {/* Command line */}
@@ -541,57 +517,58 @@ export default function Contact() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* To field */}
-                <FieldLine
-                  label="To:"
-                  value={formData.to}
-                  isActive={step === 'to'}
-                  onChange={(v) => setFormData((p) => ({ ...p, to: v }))}
-                  onKeyDown={handleKeyDown}
-                />
+                {/* To field (fixed recipient) */}
+                <div className="flex items-center font-mono text-[15px] leading-[1.6] min-h-[24px]">
+                  <span className="text-terminal-amber shrink-0" style={{ width: '10ch' }}>
+                    To:
+                  </span>
+                  <span className="text-terminal-gray">{RECIPIENT}</span>
+                </div>
 
                 {/* From field */}
                 <FieldLine
                   label="From:"
                   value={formData.from}
-                  isActive={step === 'from'}
+                  isActive
                   onChange={(v) => setFormData((p) => ({ ...p, from: v }))}
-                  onKeyDown={handleKeyDown}
+                  onKeyDown={(e) => {
+                    handleKeyDown(e);
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      subjectRef.current?.focus();
+                    }
+                  }}
                   inputRef={inputRef}
+                  type="email"
+                  autoFocus
                 />
 
                 {/* Subject field */}
                 <FieldLine
                   label="Subject:"
                   value={formData.subject}
-                  isActive={step === 'subject'}
+                  isActive
                   onChange={(v) => setFormData((p) => ({ ...p, subject: v }))}
-                  onKeyDown={handleKeyDown}
-                  inputRef={step === 'subject' ? inputRef : undefined}
+                  onKeyDown={(e) => {
+                    handleKeyDown(e);
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      textareaRef.current?.focus();
+                    }
+                  }}
+                  inputRef={subjectRef}
                 />
 
-                {/* Blank line before body */}
-                {step === 'body' && <div className="h-[15px]" />}
-
-                {/* Body field */}
-                {step === 'body' && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <BodyField
-                      value={formData.body}
-                      isActive={step === 'body'}
-                      onChange={(v) => setFormData((p) => ({ ...p, body: v }))}
-                      onKeyDown={handleKeyDown}
-                      textareaRef={textareaRef}
-                    />
-                    <p className="text-terminal-gray text-[11px] mt-2">
-                      -- Type your message. Press Ctrl+D to send, Ctrl+C to cancel.
-                    </p>
-                  </motion.div>
-                )}
+                {/* Body field — always visible and editable */}
+                <div className="mt-2">
+                  <BodyField
+                    value={formData.body}
+                    isActive
+                    onChange={(v) => setFormData((p) => ({ ...p, body: v }))}
+                    onKeyDown={handleKeyDown}
+                    textareaRef={textareaRef}
+                  />
+                </div>
 
                 {/* Error message */}
                 <AnimatePresence>
@@ -607,17 +584,19 @@ export default function Contact() {
                   )}
                 </AnimatePresence>
 
-                {/* Mobile send button */}
-                {step === 'body' && (
-                  <div className="mt-4 md:hidden">
-                    <button
-                      onClick={handleSubmit}
-                      className="border border-terminal-green text-terminal-green px-4 py-2 font-mono text-[13px] hover:bg-terminal-green-dim transition-colors duration-200"
-                    >
-                      [ SEND ]
-                    </button>
-                  </div>
-                )}
+                {/* Send row — always visible on desktop and mobile */}
+                <div className="mt-4 flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="border border-terminal-green text-terminal-green px-4 py-2 font-mono text-[13px] hover:bg-terminal-green-dim transition-colors duration-200"
+                  >
+                    [ SEND ]
+                  </button>
+                  <span className="text-terminal-gray text-[11px]">
+                    opens your email client · Ctrl+D send · Ctrl+C cancel
+                  </span>
+                </div>
               </motion.div>
             )}
 
@@ -656,7 +635,7 @@ export default function Contact() {
               <button
                 onClick={() => {
                   setFormData({ to: RECIPIENT, from: '', subject: '', body: '' });
-                  setStep('to');
+                  setStep('form');
                   setPhase('form');
                 }}
                 className="text-terminal-green hover:text-terminal-blue hover:underline transition-colors duration-150 cursor-pointer bg-transparent border-0 p-0 font-mono text-[12px]"

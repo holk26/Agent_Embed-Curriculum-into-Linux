@@ -2,11 +2,10 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 const tabs = [
   { path: '/', label: 'home.md', num: '1' },
-  { path: '/blog', label: 'blog.md', num: '5' },
   { path: '/terminal', label: 'terminal.sh', num: '2' },
   { path: '/projects', label: 'projects/', num: '3' },
   { path: '/contact', label: 'contact.txt', num: '4' },
-  { path: '/settings', label: 'settings.conf', num: '6' },
+  { path: '/settings', label: 'settings.conf', num: '5' },
 ];
 
 export default function Navbar() {

@@ -60,18 +60,15 @@ export default function Terminal() {
 
     const initSequence = async () => {
       const now = new Date();
-      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const day = days[now.getDay()];
-      const month = months[now.getMonth()];
-      const date = now.getDate().toString().padStart(2, '0');
-      let hours = now.getHours();
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const seconds = now.getSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      const year = now.getFullYear();
-      const loginMsg = `Last login: ${day} ${month} ${date} ${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm} PST ${year} from 192.168.1.100`;
+      const fmt = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Vancouver',
+        weekday: 'short', month: 'short', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: true, year: 'numeric', timeZoneName: 'short',
+      });
+      const parts = fmt.formatToParts(now);
+      const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+      const loginMsg = `Last login: ${get('weekday')} ${get('month')} ${get('day')} ${get('hour')}:${get('minute')}:${get('second')} ${get('dayPeriod')} ${get('timeZoneName')} ${get('year')} from 192.168.1.100`;
 
       await typeText(loginMsg, 'output', 30);
       await sleep(400);

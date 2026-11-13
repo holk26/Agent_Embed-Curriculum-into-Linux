@@ -18,7 +18,14 @@ export default function Footer() {
     return () => window.removeEventListener('scroll', updateScroll);
   }, [location.pathname]);
 
-  const pageName = location.pathname === '/' ? 'home.md' : location.pathname.slice(1) + (location.pathname === '/terminal' ? '.sh' : location.pathname === '/projects' ? '/' : '.txt');
+  const pageNames: Record<string, string> = {
+    '/': 'home.md',
+    '/terminal': 'terminal.sh',
+    '/projects': 'projects/',
+    '/contact': 'contact.txt',
+    '/settings': 'settings.conf',
+  };
+  const pageName = pageNames[location.pathname] ?? location.pathname.slice(1) + '.txt';
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-50 h-[28px] bg-terminal-black-alt border-t border-terminal-gray-dark flex items-center justify-between px-3 select-none hidden md:flex">

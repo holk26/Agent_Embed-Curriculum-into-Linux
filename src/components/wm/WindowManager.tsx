@@ -6,7 +6,6 @@ import Taskbar from './Taskbar';
 import Terminal from '@/pages/Terminal';
 import Projects from '@/pages/Projects';
 import Contact from '@/pages/Contact';
-import Blog from '@/pages/Blog';
 import Settings from '@/pages/Settings';
 
 /* ------------------------------------------------------------------ */
@@ -55,7 +54,6 @@ const APP_REGISTRY: Record<string, { title: string; icon: string; component: Rea
   terminal: { title: 'Terminal', icon: '>', component: Terminal },
   projects: { title: 'Projects', icon: '📁', component: Projects },
   contact: { title: 'Contact', icon: '@', component: Contact },
-  blog: { title: 'Blog', icon: '📝', component: Blog },
   settings: { title: 'Settings', icon: '⚙', component: Settings },
 };
 
@@ -63,7 +61,6 @@ const PATH_TO_APP: Record<string, string> = {
   '/terminal': 'terminal',
   '/projects': 'projects',
   '/contact': 'contact',
-  '/blog': 'blog',
   '/settings': 'settings',
 };
 

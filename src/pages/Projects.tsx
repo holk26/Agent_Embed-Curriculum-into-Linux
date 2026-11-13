@@ -48,6 +48,37 @@ function padLine(content: string, leftPad = 1): string {
    ──────────────────────────────────────────────────────────────── */
 const projects: ProjectEntry[] = [
   {
+    id: 'hiresonny',
+    name: 'hiresonny/',
+    type: 'directory',
+    permissions: 'drwxr-xr-x',
+    owner: 'moonsbow',
+    size: '6.1K',
+    date: 'Jan 10 2025',
+    icon: '📁',
+    detail: {
+      title: 'Sonny — AI Marketing Employee',
+      status: 'IN PROGRESS · WAITLIST',
+      tech: 'LLMs, Agent Orchestration, Meta Ads API, Python, React/Next.js',
+      role: 'Founder & Lead Developer',
+      duration: '2025 — PRESENT',
+      company: 'hiresonny.com',
+      description:
+        'Flagship product: an AI marketing employee that plans, launches and optimizes Meta Ads campaigns from plain-language goals. Expanding into a platform of AI employees for small businesses (receptionist, sales, collections, marketing).',
+      bullets: [
+        'Designed the multi-step agent loop that turns a business goal into a live ad campaign',
+        'Built campaign planning, launch and optimization pipeline on the Meta Ads API',
+        'Shipping the "hire your AI employee" waitlist / early-access platform',
+      ],
+      highlights: [
+        'LLM agent orchestration end-to-end',
+        'Meta Ads API integration',
+        'Python + React/Next.js stack',
+        'Founder-led product development',
+      ],
+    },
+  },
+  {
     id: 'moonsbow-ai',
     name: 'moonsbow-ai/',
     type: 'directory',
@@ -67,10 +98,10 @@ const projects: ProjectEntry[] = [
         'Leading the development of an AI-driven automation platform that leverages autonomous agents and LLMs to streamline business processes. Architecting scalable full-stack solutions with modern cloud infrastructure.',
       bullets: [
         'Architecting AI automation platform with React and TypeScript',
-        'Integrating OpenAI/ChatGPT APIs for intelligent process automation',
-        'Building scalable backend services with Python and Azure',
-        'Developing autonomous agents for business workflow optimization',
-        'Implementing CI/CD pipelines for seamless deployments',
+        'Integrating OpenAI/Claude APIs for intelligent process automation',
+        'Building agent workflows: data extraction, content generation, support triage',
+        'Operating the full production stack on my own VPS (Dokploy, Docker, CI/CD)',
+        'Key result: cut one client\'s operational workload by 80%',
       ],
       highlights: [
         'React + TypeScript frontend architecture',
@@ -103,8 +134,7 @@ const projects: ProjectEntry[] = [
         'Architected CI/CD pipelines to streamline development workflows',
         'Integrated OpenAI/ChatGPT APIs for AI-driven automation',
         'Optimized business processes through intelligent automation',
-        'Improved system efficiency, scalability, and functionality',
-        'Collaborated with teams to deploy AI-enhanced solutions',
+        'Key result: AI automation improved operational efficiency by 40%',
       ],
       highlights: [
         'Azure DevOps CI/CD pipeline architecture',
@@ -137,8 +167,7 @@ const projects: ProjectEntry[] = [
         'Built ReactJS dashboards with dynamic charting and real-time feeds',
         'Developed C# backend services and Power Apps solutions',
         'Created custom APIs for workflow efficiency and interoperability',
-        'Automated routine processes, enhancing efficiency and accuracy',
-        'Collaborated with cross-functional teams on new features',
+        'Key result: automated workflows, reducing processing time by 60%',
       ],
       highlights: [
         'ReactJS + TypeScript frontend architecture',
@@ -609,24 +638,28 @@ function ProjectDetailView({ detail }: { detail: ProjectDetail }) {
           <>{padLine(line, 1)}{'\n'}</>
         ))}
         {'\n'}
-        {detail.bullets.map((bullet) => (
-          <>
-            {padLine(`• ${bullet}`, 1)}
-            {'\n'}
-          </>
-        ))}
+        {detail.bullets.flatMap((bullet) =>
+          wrapText(`• ${bullet}`, BOX_WIDTH - 2).map((line, i) => (
+            <span key={`b-${bullet.slice(0, 12)}-${i}`}>
+              {padLine(line, i === 0 ? 1 : 3)}
+              {'\n'}
+            </span>
+          ))
+        )}
         {MID_BORDER}
         {'\n'}
         {padLine('TECHNICAL HIGHLIGHTS', 1)}
         {'\n'}
         {MID_BORDER}
         {'\n'}
-        {detail.highlights.map((highlight) => (
-          <>
-            {padLine(`• ${highlight}`, 1)}
-            {'\n'}
-          </>
-        ))}
+        {detail.highlights.flatMap((highlight) =>
+          wrapText(`• ${highlight}`, BOX_WIDTH - 2).map((line, i) => (
+            <span key={`h-${highlight.slice(0, 12)}-${i}`}>
+              {padLine(line, i === 0 ? 1 : 3)}
+              {'\n'}
+            </span>
+          ))
+        )}
         {BOT_BORDER}
       </pre>
     </div>

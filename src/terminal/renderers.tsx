@@ -232,8 +232,8 @@ export function LanguagesOutput({ content }: { content: string }) {
           return (
             <div key={i}>
               <span className="text-terminal-white">English    </span>
-              <span className="text-terminal-amber">{line.replace('English    ', '').replace('  Basic', '')}</span>
-              <span className="text-terminal-gray">  Basic</span>
+              <span className="text-terminal-amber">{line.replace('English    ', '').replace('  Intermediate (B2+)', '')}</span>
+              <span className="text-terminal-gray">  Intermediate (B2+)</span>
             </div>
           );
         }
