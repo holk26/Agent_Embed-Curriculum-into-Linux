@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { track } from '../lib/umami';
 
 const BOOT_LINES = [
   '[    0.000000] Linux version 6.8.0-homero (build@cv.x.moonsbow.com)',
@@ -194,6 +195,7 @@ export default function Home() {
                 href={link.url}
                 target={link.url.startsWith('http') ? '_blank' : undefined}
                 rel="noopener noreferrer"
+                onClick={() => track(`link-${link.label.toLowerCase().replace(/\s+/g, '-')}`)}
                 className="text-terminal-green hover:text-terminal-blue hover:underline transition-colors duration-150"
               >
                 {link.value}
@@ -206,6 +208,7 @@ export default function Home() {
           <a
             href="./Homero_Cabrera_CV.pdf"
             download="Homero_Cabrera_CV.pdf"
+            onClick={() => track('download-cv')}
             className="inline-block border border-terminal-green bg-terminal-green text-terminal-black px-5 py-2.5 text-[13px] font-bold hover:bg-transparent hover:text-terminal-green transition-colors duration-200"
           >
             [ DOWNLOAD CV ]

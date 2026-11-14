@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { track } from '../lib/umami';
 
 /* ─── Types ─── */
 type FormStep = 'form' | 'sending' | 'success' | 'cancelled';
@@ -257,6 +258,7 @@ function ContactCard() {
             <span className="text-terminal-green w-[24px] shrink-0 text-center">@</span>
             <a
               href={`mailto:${CONTACT.email}`}
+              onClick={() => track('link-email')}
               className="text-terminal-green hover:text-terminal-blue hover:underline transition-colors duration-150"
             >
               {CONTACT.email}
@@ -266,6 +268,7 @@ function ContactCard() {
             <span className="text-terminal-green w-[24px] shrink-0 text-center">#</span>
             <a
               href={`tel:${CONTACT.phone.replace(/\D/g, '')}`}
+              onClick={() => track('link-phone')}
               className="text-terminal-green hover:text-terminal-blue hover:underline transition-colors duration-150"
             >
               {CONTACT.phone}
@@ -281,6 +284,7 @@ function ContactCard() {
               href={CONTACT.linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track('link-linkedin')}
               className="text-terminal-green hover:text-terminal-blue hover:underline transition-colors duration-150"
             >
               {CONTACT.linkedin}
@@ -292,6 +296,7 @@ function ContactCard() {
               href={CONTACT.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track('link-github')}
               className="text-terminal-green hover:text-terminal-blue hover:underline transition-colors duration-150"
             >
               {CONTACT.github}
@@ -447,6 +452,7 @@ export default function Contact() {
       setError('sendmail: invalid email format in From field');
       return;
     }
+    track('contact-send');
     if (!formData.body.trim()) {
       setError('sendmail: message body is required');
       return;
