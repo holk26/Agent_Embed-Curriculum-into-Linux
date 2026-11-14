@@ -318,7 +318,7 @@ export default function Terminal() {
         {/* Scrollback area */}
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto p-3 md:p-4 font-mono text-[13px] md:text-[15px] leading-relaxed scrollbar-thin scrollbar-track-terminal-black scrollbar-thumb-terminal-green-dim"
+          className="flex-1 overflow-y-auto overflow-x-auto p-3 md:p-4 font-mono text-[13px] md:text-[15px] leading-relaxed scrollbar-thin scrollbar-track-terminal-black scrollbar-thumb-terminal-green-dim"
           style={{ maxHeight: 'calc(100dvh - 40px - 28px - 32px)' }}
         >
           <style>{`

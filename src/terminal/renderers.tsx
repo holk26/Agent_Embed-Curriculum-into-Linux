@@ -6,7 +6,7 @@ import type { Line } from './types';
 
 export function LsOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         const isDir = line.startsWith('d');
         const isHidden = line.endsWith(' .') || line.endsWith(' ..');
@@ -28,7 +28,7 @@ export function LsOutput({ content }: { content: string }) {
 
 export function TreeOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed text-terminal-gray">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed text-terminal-gray">
       {content.split('\n').map((line, i) => {
         const isDir = line.trim().endsWith('/');
         const isSummary = line.includes('directories') || line.includes('files');
@@ -54,7 +54,7 @@ export function TreeOutput({ content }: { content: string }) {
 
 export function HelpOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed text-terminal-gray">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed text-terminal-gray">
       {content.split('\n').map((line, i) => {
         if (line.includes('═')) return <div key={i} className="text-terminal-green">{line}</div>;
         if (line.includes('║')) {
@@ -80,7 +80,7 @@ export function HelpOutput({ content }: { content: string }) {
 
 export function NeofetchOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[12px] md:text-[13px] leading-snug">
+    <pre className="whitespace-pre  font-mono text-[12px] md:text-[13px] leading-snug">
       {content.split('\n').map((line, i) => {
         const colonIdx = line.indexOf(':');
         if (colonIdx > 28 && colonIdx < 70) {
@@ -101,7 +101,7 @@ export function NeofetchOutput({ content }: { content: string }) {
 
 export function SkillsOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
         if (line.includes('─') && !line.includes('█')) return <div key={i} className="text-terminal-gray">{line}</div>;
@@ -131,7 +131,7 @@ export function SkillsOutput({ content }: { content: string }) {
 
 export function AboutOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
         if (line.startsWith('Name:') || line.startsWith('Location:') || line.startsWith('Phone:') || line.startsWith('Email:') || line.startsWith('Status:')) {
@@ -160,7 +160,7 @@ export function AboutOutput({ content }: { content: string }) {
 
 export function ExperienceOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
         if (line.includes('────')) return <div key={i} className="text-terminal-gray-dark">{line}</div>;
@@ -188,7 +188,7 @@ export function ExperienceOutput({ content }: { content: string }) {
 
 export function EducationOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
         if (line.includes('────')) return <div key={i} className="text-terminal-gray-dark">{line}</div>;
@@ -216,7 +216,7 @@ export function EducationOutput({ content }: { content: string }) {
 
 export function LanguagesOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
         if (line.startsWith('Spanish')) {
@@ -245,7 +245,7 @@ export function LanguagesOutput({ content }: { content: string }) {
 
 export function ContactOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.includes('━')) return <div key={i} className="text-terminal-green">{line}</div>;
         if (line.includes(':') && (line.includes('Name:') || line.includes('Location:') || line.includes('Phone:') || line.includes('Email:') || line.includes('LinkedIn:') || line.includes('GitHub:') || line.includes('Work Status:') || line.includes('Best contact'))) {
@@ -266,7 +266,7 @@ export function ContactOutput({ content }: { content: string }) {
 
 export function CertOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.includes('├──') || line.includes('└──')) {
           const arrow = line.includes('├──') ? '├── ' : '└── ';
@@ -289,7 +289,7 @@ export function CertOutput({ content }: { content: string }) {
 
 export function PsOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (i === 0) {
           return <div key={i} className="text-terminal-white font-bold">{line}</div>;
@@ -310,7 +310,7 @@ export function PsOutput({ content }: { content: string }) {
 
 export function CowsayOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.trim().startsWith('\\') || line.trim().startsWith('(') || line.trim().startsWith('(') || line.includes('(oo)') || line.includes('(__)') || line.includes('||')) {
           return <div key={i} className="text-terminal-green">{line}</div>;
@@ -323,7 +323,7 @@ export function CowsayOutput({ content }: { content: string }) {
 
 export function SshOutput({ content }: { content: string }) {
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (line.startsWith('Connecting') || line.startsWith('Connection') || line.startsWith('Handshake') || line.startsWith('Authenticat')) {
           return <div key={i} className="text-terminal-amber">{line}</div>;
@@ -340,7 +340,7 @@ export function SshOutput({ content }: { content: string }) {
 export function CalOutput({ content }: { content: string }) {
   const today = new Date().getDate();
   return (
-    <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] leading-relaxed">
+    <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] leading-relaxed">
       {content.split('\n').map((line, i) => {
         if (i === 0) return <div key={i} className="text-terminal-white font-bold">{line}</div>;
         if (i === 1) return <div key={i} className="text-terminal-green">{line}</div>;
@@ -363,14 +363,14 @@ export function CalOutput({ content }: { content: string }) {
 
 export function DefaultOutput({ content, type }: { content: string; type: string }) {
   if (type === 'error') {
-    return <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] text-terminal-red leading-relaxed">{content}</pre>;
+    return <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] text-terminal-red leading-relaxed">{content}</pre>;
   }
-  return <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] text-terminal-gray leading-relaxed">{content}</pre>;
+  return <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] text-terminal-gray leading-relaxed">{content}</pre>;
 }
 
 export function OutputRenderer({ line }: { line: Line }) {
   if (line.type === 'command') {
-    return <pre className="whitespace-pre-wrap font-mono text-[13px] md:text-[14px] text-terminal-white leading-relaxed">{line.content}</pre>;
+    return <pre className="whitespace-pre  font-mono text-[13px] md:text-[14px] text-terminal-white leading-relaxed">{line.content}</pre>;
   }
   if (line.type === 'error') {
     return <DefaultOutput content={line.content} type="error" />;
