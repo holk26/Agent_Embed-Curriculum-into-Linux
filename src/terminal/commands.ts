@@ -435,7 +435,29 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
     const uptimeStr = uptimeMin < 1 ? 'just now' : `${uptimeMin} mins`;
     const memUsed = Math.floor(900 + Math.random() * 100);
 
-    const ascii = `                    .OMMMMMMMMMMMMMMMO.                   \n                 .MMMMMMMMMMMMMMMMMMMMM.                \n                MMMMMMMM'            'MMMM                \n               MMMMMM                  MM               \n              MMMMM'                    'M              \n             MMMMM                       M              \n            .MMMM                        .              \n            MMMM'                                       \n           MMMM'                                        \n          MMMM'                                         \n          MMMM                                          \n          MMMM                                          \n         .MMM'                                          \n          MMM'                                          \n          MMMM                                          \n          MMMM                                          \n          MMMM.                                         \n           MMM:                    .M'                   \n            MMM.                  .M'                    \n             'MMM.               .M'                     \n               'MMMMMMMMMMMMMMMMMM'                     \n                 ''MMMMMMMMMMM''                       `;
+    const ascii = `               #
+           ########
+         #######        *
+        #######
+       ######
+      #######    .
+      ######
+     #######
+     ######         *
+     ######
+     ######
+    #######
+     ######    .     .
+     ######
+     ######
+     #######
+      ######
+      #######
+       ######
+        #######
+         #######
+           ########
+               #`;
 
     const info = [
       ['OS', 'moonsbow OS 6.8.0'],
@@ -458,7 +480,7 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
     const asciiLines = ascii.split('\n');
     let output = '';
     for (let i = 0; i < Math.max(asciiLines.length, info.length + 2); i++) {
-      const art = (asciiLines[i] || '').padEnd(55, ' ');
+      const art = (asciiLines[i] || '').padEnd(40, ' ');
       if (i === 0) {
         output += art + 'moonsbow@dev\n';
       } else if (i === 1) {

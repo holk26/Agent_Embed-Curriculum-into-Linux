@@ -83,7 +83,7 @@ export function NeofetchOutput({ content }: { content: string }) {
     <pre className="whitespace-pre-wrap font-mono text-[12px] md:text-[13px] leading-snug">
       {content.split('\n').map((line, i) => {
         const colonIdx = line.indexOf(':');
-        if (colonIdx > 40 && colonIdx < 60) {
+        if (colonIdx > 28 && colonIdx < 70) {
           const label = line.slice(0, colonIdx + 1);
           const value = line.slice(colonIdx + 1);
           return (

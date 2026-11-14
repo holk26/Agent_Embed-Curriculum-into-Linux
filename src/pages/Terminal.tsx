@@ -5,6 +5,31 @@ import { OutputRenderer } from '@/terminal/renderers';
 import { useTheme } from '@/components/effects/ThemeProvider';
 import type { Line } from '@/terminal/types';
 
+/* Crescent moon logo — moonsbow (generated crescent, pointy horns) */
+const MOON_LOGO = `              #
+          ########
+        #######       *
+       #######
+      ######
+     #######   .
+     ######
+    #######
+    ######        *
+    ######
+    ######
+   #######
+    ######   .    .
+    ######
+    ######
+    #######
+     ######
+     #######
+      ######
+       #######
+        #######
+          ########
+              #`;
+
 /* ------------------------------------------------------------------ */
 /*  Main Terminal Component                                            */
 /* ------------------------------------------------------------------ */
@@ -72,7 +97,9 @@ export default function Terminal() {
 
       await typeText(loginMsg, 'output', 18);
       await sleep(400);
-      await typeText('Welcome to moonsbow OS 6.8.0', 'output', 30);
+      await typeText('Welcome to moonsbow OS 6.8.0', 'output', 18);
+      await sleep(200);
+      await typeText(MOON_LOGO, 'output', 10);
       await sleep(200);
     };
 
