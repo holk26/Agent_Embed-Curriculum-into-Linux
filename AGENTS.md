@@ -127,7 +127,9 @@ Implements the full terminal UX:
 - Scrollback buffer with `Line[]` state.
 - Per-command output renderers (`OutputRenderer`) that syntax-highlight ASCII output with terminal colors.
 - Input handling: history (↑/↓), TAB completion, Ctrl+C interrupt, Ctrl+L clear.
-- A 400ms processing delay before output is typed character-by-character.
+- A 120ms processing beat before output, then adaptive chunked typing: output
+  animates in ~600ms regardless of length (per-char 15ms typing used to take
+  30s+ on long ASCII blocks like `experience`).
 
 ### `Projects.tsx`
 - Desktop: 40/60 dual-pane layout (file list + README detail view).

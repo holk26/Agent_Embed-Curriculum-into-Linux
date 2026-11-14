@@ -70,7 +70,7 @@ export default function Terminal() {
       const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
       const loginMsg = `Last login: ${get('weekday')} ${get('month')} ${get('day')} ${get('hour')}:${get('minute')}:${get('second')} ${get('dayPeriod')} ${get('timeZoneName')} ${get('year')} from 192.168.1.100`;
 
-      await typeText(loginMsg, 'output', 30);
+      await typeText(loginMsg, 'output', 18);
       await sleep(400);
       await typeText('Welcome to moonsbow OS 6.8.0', 'output', 30);
       await sleep(200);
@@ -88,12 +88,14 @@ export default function Terminal() {
       const id = Date.now().toString() + Math.random();
       setLines(prev => [...prev, { id, type, content: '', commandName: type === 'output' ? undefined : undefined }]);
 
+      // Adaptive chunking: short strings keep the per-char feel, longer ones
+      // accelerate so the animation always lands in ~40 ticks.
+      const CHUNK = Math.max(1, Math.ceil(text.length / 40));
       let i = 0;
-      const chars = text.split('');
 
       const step = () => {
-        i++;
-        if (i > chars.length) {
+        i = Math.min(i + CHUNK, text.length + 1);
+        if (i > text.length) {
           setLines(prev => prev.map(l => l.id === id ? { ...l, content: text } : l));
           setIsTyping(false);
           resolve();
@@ -182,18 +184,22 @@ export default function Terminal() {
 
       setIsTyping(true);
       const text = result.content;
+      // Adaptive typing: chunk so any output animates in ~600ms regardless
+      // of length (long ASCII blocks used to take 30s+ at 15ms/char).
+      const CHUNK = Math.max(1, Math.ceil(text.length / 50));
+      const TICK = 12;
       let i = 0;
       const step = () => {
-        i++;
+        i = Math.min(i + CHUNK, text.length + 1);
         if (i > text.length) {
           setLines(prev => prev.map(l => l.id === lineId ? { ...l, content: text } : l));
           setIsTyping(false);
           return;
         }
         setLines(prev => prev.map(l => l.id === lineId ? { ...l, content: text.slice(0, i) } : l));
-        setTimeout(step, 15);
+        setTimeout(step, TICK);
       };
-      setTimeout(step, 400); // 400ms processing delay per design
+      setTimeout(step, 120); // brief "processing" beat before output
     }
   }, [currentDir, cmdHistory, navigate]);
 
