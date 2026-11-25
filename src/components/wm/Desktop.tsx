@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useWindowManager } from './WindowManager';
 import DesktopIcon from './DesktopIcon';
+import { LIVE_SITES } from './IframeWindow';
 
 export default function Desktop() {
   const { openWindow } = useWindowManager();
@@ -29,8 +30,8 @@ export default function Desktop() {
     { id: 'terminal', label: 'Terminal', icon: '>' },
     { id: 'projects', label: 'Projects', icon: '📁' },
     { id: 'contact', label: 'Contact', icon: '@' },
-    { id: 'blog', label: 'Blog', icon: '📝' },
     { id: 'settings', label: 'Settings', icon: '⚙' },
+    ...LIVE_SITES.map((site) => ({ id: site.appType, label: site.label, icon: site.icon })),
   ];
 
   return (
