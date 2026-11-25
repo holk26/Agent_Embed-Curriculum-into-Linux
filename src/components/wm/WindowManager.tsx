@@ -7,6 +7,11 @@ import Terminal from '@/pages/Terminal';
 import Projects from '@/pages/Projects';
 import Contact from '@/pages/Contact';
 import Settings from '@/pages/Settings';
+import {
+  LIVE_SITES,
+  LIVE_SITE_APP_TYPES,
+  SITE_WINDOW_COMPONENTS,
+} from './IframeWindow';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -46,6 +51,12 @@ export function useWindowManager() {
   return ctx;
 }
 
+/* Null-safe variant: pages rendered outside window mode (standard
+   layout) have no provider — callers can fall back to a plain link. */
+export function useWindowManagerOptional() {
+  return useContext(WindowManagerContext);
+}
+
 /* ------------------------------------------------------------------ */
 /*  Registry                                                           */
 /* ------------------------------------------------------------------ */
@@ -55,6 +66,12 @@ const APP_REGISTRY: Record<string, { title: string; icon: string; component: Rea
   projects: { title: 'Projects', icon: '📁', component: Projects },
   contact: { title: 'Contact', icon: '@', component: Contact },
   settings: { title: 'Settings', icon: '⚙', component: Settings },
+  ...Object.fromEntries(
+    LIVE_SITES.map((site) => [
+      site.appType,
+      { title: site.title, icon: site.icon, component: SITE_WINDOW_COMPONENTS[site.appType] },
+    ]),
+  ),
 };
 
 const PATH_TO_APP: Record<string, string> = {
@@ -68,7 +85,6 @@ const APP_TO_PATH: Record<string, string> = {
   terminal: '/terminal',
   projects: '/projects',
   contact: '/contact',
-  blog: '/blog',
   settings: '/settings',
 };
 
@@ -97,8 +113,15 @@ export default function WindowManager({ currentPath }: { currentPath: string }) 
       }
 
       const app = APP_REGISTRY[appType];
+      if (!app) return prev;
       const id = `${appType}-${Date.now()}`;
       windowIdToFocus = id;
+      /* Live-site windows open maximized on small screens: an iframe
+         at 900x600 is unusable on a phone. */
+      const startMaximized =
+        LIVE_SITE_APP_TYPES.has(appType) &&
+        typeof window !== 'undefined' &&
+        window.innerWidth < 768;
       const newWindow: WindowState = {
         id,
         title: app.title,
@@ -107,7 +130,7 @@ export default function WindowManager({ currentPath }: { currentPath: string }) 
         position: { x: 40 + (prev.length % 5) * 30, y: 40 + (prev.length % 5) * 30 },
         size: { width: 900, height: 600 },
         minimized: false,
-        maximized: false,
+        maximized: startMaximized,
         zIndex: nextZRef.current++,
       };
       return [...prev, newWindow];

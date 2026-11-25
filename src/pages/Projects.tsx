@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useWindowManagerOptional } from '../components/wm/WindowManager';
 
 /* ────────────────────────────────────────────────────────────────
    Types
@@ -27,6 +28,9 @@ interface ProjectDetail {
   description: string;
   bullets: string[];
   highlights: string[];
+  /* Live public site: opens as an OS-style iframe window in window
+     mode, or in a new browser tab in the standard layout. */
+  site?: { url: string; appType: string; label: string };
 }
 
 /* ────────────────────────────────────────────────────────────────
@@ -65,6 +69,7 @@ const projects: ProjectEntry[] = [
       company: 'hiresonny.com',
       description:
         'Flagship product: an AI marketing employee that plans, launches and optimizes Meta Ads campaigns from plain-language goals. Expanding into a platform of AI employees for small businesses (receptionist, sales, collections, marketing).',
+      site: { url: 'https://hiresonny.com', appType: 'site-hiresonny', label: 'hiresonny.com' },
       bullets: [
         'Designed the multi-step agent loop that turns a business goal into a live ad campaign',
         'Built campaign planning, launch and optimization pipeline on the Meta Ads API',
@@ -96,6 +101,7 @@ const projects: ProjectEntry[] = [
       company: 'Moonsbow.com',
       description:
         'Leading the development of an AI-driven automation platform that leverages autonomous agents and LLMs to streamline business processes. Architecting scalable full-stack solutions with modern cloud infrastructure.',
+      site: { url: 'https://moonsbow.com', appType: 'site-moonsbow', label: 'moonsbow.com' },
       bullets: [
         'Architecting AI automation platform with React and TypeScript',
         'Integrating OpenAI/Claude APIs for intelligent process automation',
@@ -610,9 +616,26 @@ function HelpRow({ keys, desc }: { keys: string; desc: string }) {
 function ProjectDetailView({ detail }: { detail: ProjectDetail }) {
   // Word-wrap description to fit inside box
   const descLines = wrapText(detail.description, BOX_WIDTH - 2);
+  const wm = useWindowManagerOptional();
+  const site = detail.site;
 
   return (
     <div className="font-mono text-[13px] leading-[1.6] text-terminal-green-dim">
+      {site && (
+        <button
+          type="button"
+          onClick={() => {
+            if (wm) {
+              wm.openWindow(site.appType);
+            } else {
+              window.open(site.url, '_blank', 'noopener,noreferrer');
+            }
+          }}
+          className="mb-3 inline-block border border-terminal-green px-3 py-1.5 font-mono text-[12px] font-bold text-terminal-green hover:bg-terminal-green-dim hover:text-terminal-black transition-colors duration-150"
+        >
+          [ ↗ OPEN LIVE SITE — {site.label} ]
+        </button>
+      )}
       <pre className="m-0 p-0 whitespace-pre overflow-x-auto">
         {TOP_BORDER}
         {'\n'}

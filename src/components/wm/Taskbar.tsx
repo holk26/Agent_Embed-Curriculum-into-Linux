@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useWindowManager } from './WindowManager';
 import { useWindowMode } from '@/hooks/use-window-mode';
+import { LIVE_SITES } from './IframeWindow';
 
 
 export default function Taskbar() {
@@ -90,14 +91,22 @@ export default function Taskbar() {
             >
               <span className="mr-2">{'@'}</span>Contact
             </MenuItem>
-            <MenuItem
-              onClick={() => {
-                openWindow('blog');
-                setShowMenu(false);
-              }}
-            >
-              <span className="mr-2">{'📝'}</span>Blog
-            </MenuItem>
+            <div className="border-t border-terminal-gray-dark my-1" />
+            <div className="px-3 py-1 font-mono text-[10px] tracking-[1px] text-terminal-gray">
+              LIVE SITES
+            </div>
+            {LIVE_SITES.map((site) => (
+              <MenuItem
+                key={site.appType}
+                onClick={() => {
+                  openWindow(site.appType);
+                  setShowMenu(false);
+                }}
+              >
+                <span className="mr-2">{site.icon}</span>
+                {site.label}
+              </MenuItem>
+            ))}
             <div className="border-t border-terminal-gray-dark my-1" />
             <MenuItem
               onClick={() => {

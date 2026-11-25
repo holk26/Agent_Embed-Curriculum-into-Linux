@@ -27,7 +27,7 @@ export function getCompletions(partial: string, currentDir: string): string[] {
   } else if (currentDir === '~/cv/education') {
     all.push('bachelor-software-engineering/', 'mobile-apps-specialization/', 'technologist-info-systems/');
   } else if (currentDir === '~/cv/experience') {
-    all.push('moonsbow.md', 'ufinet-senior.md', 'ufinet-dev.md', 'azteca.md', 'digital-solutions.md', 'telefonica-bo.md', 'town-hall.md');
+    all.push('moonsbow.md', 'ufinet-senior.md', 'azteca.md', 'digital-solutions.md', 'telefonica-bo.md', 'town-hall.md');
   } else if (currentDir === '~/cv/projects') {
     all.push('data-automation.md', 'ssis-pipeline.md', 'web-dashboard.md');
   }
@@ -337,7 +337,6 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
         formatLsLine('drwxr-xr-x', '4', 'moonsbow', 'dev', '4096', '..'),
         formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1847', 'moonsbow.md'),
         formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1562', 'ufinet-senior.md'),
-        formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1245', 'ufinet-dev.md'),
         formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1432', 'azteca.md'),
         formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '1024', 'digital-solutions.md'),
         formatLsLine('-rw-r--r--', '1', 'moonsbow', 'dev', '2156', 'telefonica-bo.md'),
@@ -364,7 +363,7 @@ Tip: Use TAB for command completion. Use ↑/↓ for history.`,
 
   tree: () => ({
     type: 'output',
-    content: `.\n├── about.txt\n├── certifications/\n│   ├── foundational-csharp.cert\n│   ├── cybersecurity-telework.cert\n│   ├── google-tools.cert\n│   ├── html-css.cert\n│   └── react-guide.cert\n├── contact.txt\n├── education/\n│   ├── bachelor-software-engineering/\n│   ├── mobile-apps-specialization/\n│   └── technologist-info-systems/\n├── experience/\n│   ├── moonsbow.md\n│   ├── ufinet-senior.md\n│   ├── ufinet-dev.md\n│   ├── azteca.md\n│   ├── digital-solutions.md\n│   ├── telefonica-bo.md\n│   └── town-hall.md\n├── languages.txt\n├── projects/\n│   ├── data-automation.md\n│   ├── ssis-pipeline.md\n│   └── web-dashboard.md\n└── skills.txt\n\n5 directories, 18 files`,
+    content: `.\n├── about.txt\n├── certifications/\n│   ├── foundational-csharp.cert\n│   ├── cybersecurity-telework.cert\n│   ├── google-tools.cert\n│   ├── html-css.cert\n│   └── react-guide.cert\n├── contact.txt\n├── education/\n│   ├── bachelor-software-engineering/\n│   ├── mobile-apps-specialization/\n│   └── technologist-info-systems/\n├── experience/\n│   ├── moonsbow.md\n│   ├── ufinet-senior.md\n│   ├── azteca.md\n│   ├── digital-solutions.md\n│   ├── telefonica-bo.md\n│   └── town-hall.md\n├── languages.txt\n├── projects/\n│   ├── data-automation.md\n│   ├── ssis-pipeline.md\n│   └── web-dashboard.md\n└── skills.txt\n\n5 directories, 18 files`,
   }),
 
   cat: (args) => {
